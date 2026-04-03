@@ -21,7 +21,7 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 
 ROOT           = Path(__file__).parent
 OPENROUTER_KEY = os.environ.get("OPENROUTER_API_KEY", "")
-MODEL          = "google/gemini-2.0-flash-exp:free"
+MODEL = "mistralai/mistral-7b-instruct:free"
 
 SYSTEM_PROMPT = """You are Charlie, the friendly AI assistant for the University of New Haven (UNH).
 Help students with: academic calendars, campus buildings, IT support (UIS), and Career Development Center (CDC).
