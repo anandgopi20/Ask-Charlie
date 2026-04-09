@@ -6,10 +6,7 @@
   <title>Ask Charlie — UNH AI Assistant</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet"/>
   <style>
-    :root {
-      --blue:#003087;--blue-dark:#001f5e;--gold:#C8A84B;--gold-light:#f5edd6;
-      --bg:#f5f4f0;--white:#ffffff;--text:#1a1a1a;--muted:#6b6b6b;--border:#e4e2db;
-    }
+    :root{--blue:#003087;--blue-dark:#001f5e;--gold:#C8A84B;--gold-light:#f5edd6;--bg:#f5f4f0;--white:#ffffff;--text:#1a1a1a;--muted:#6b6b6b;--border:#e4e2db;}
     *{box-sizing:border-box;margin:0;padding:0;}
     html,body{height:100%;overflow:hidden;font-family:'Source Sans 3',sans-serif;background:var(--bg);}
     .app{display:flex;flex-direction:column;height:100vh;}
@@ -61,7 +58,11 @@
     .bubble.bot{background:var(--white);color:var(--text);border:1px solid var(--border);border-top-left-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,0.05);}
     .bubble.user{background:var(--blue);color:white;border-top-right-radius:4px;}
     .bubble.bot a{color:var(--blue);}
+    .bubble.bot strong{color:var(--blue-dark);}
     .msg-time{font-size:10px;color:var(--muted);margin-top:4px;padding:0 4px;}
+    .suggestions{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+    .suggestion-btn{background:var(--gold-light);border:1px solid rgba(200,168,75,0.4);color:#7a5c1a;border-radius:12px;font-size:12px;padding:5px 12px;cursor:pointer;font-family:inherit;transition:all 0.15s;}
+    .suggestion-btn:hover{background:var(--gold);color:var(--blue-dark);}
     .typing-row{display:flex;gap:12px;align-items:center;}
     .typing{background:var(--white);border:1px solid var(--border);border-radius:16px;border-top-left-radius:4px;padding:14px 18px;display:flex;gap:5px;}
     .typing span{width:8px;height:8px;background:#bbb;border-radius:50%;animation:bounce 1.2s infinite;}
@@ -95,54 +96,20 @@
     <div class="sidebar">
       <div class="sidebar-section">
         <div class="sidebar-title">Topics</div>
-        <button class="topic-btn" onclick="ask('What academic programs and majors does UNH offer?')">
-          <div class="topic-icon" style="background:#eef2ff">🎓</div>
-          <div class="topic-info"><h4>Academic Programs</h4><p>Degrees & majors</p></div>
-        </button>
-        <button class="topic-btn" onclick="ask('How do I apply to UNH and what are the admissions requirements?')">
-          <div class="topic-icon" style="background:#e8f5e9">📋</div>
-          <div class="topic-info"><h4>Admissions</h4><p>Apply & requirements</p></div>
-        </button>
-        <button class="topic-btn" onclick="ask('What is the tuition cost and financial aid options at UNH?')">
-          <div class="topic-icon" style="background:#fce4ec">💰</div>
-          <div class="topic-info"><h4>Tuition & Financial Aid</h4><p>Costs & scholarships</p></div>
-        </button>
-        <button class="topic-btn" onclick="ask('Academic calendar spring semester key dates and deadlines')">
-          <div class="topic-icon" style="background:#fff3e0">📅</div>
-          <div class="topic-info"><h4>Academic Calendar</h4><p>Dates & deadlines</p></div>
-        </button>
-        <button class="topic-btn" onclick="ask('Campus buildings and locations at UNH')">
-          <div class="topic-icon" style="background:#e6f4ea">🏢</div>
-          <div class="topic-info"><h4>Campus Buildings</h4><p>Find any location</p></div>
-        </button>
-        <button class="topic-btn" onclick="ask('Student life housing dining clubs activities at UNH')">
-          <div class="topic-icon" style="background:#fff8e1">🏠</div>
-          <div class="topic-info"><h4>Student Life</h4><p>Housing, dining & clubs</p></div>
-        </button>
-        <button class="topic-btn" onclick="ask('IT support UIS canvas MFA wifi printing campus card')">
-          <div class="topic-icon" style="background:#e3f2fd">💻</div>
-          <div class="topic-info"><h4>IT Support</h4><p>Canvas, MFA & WiFi</p></div>
-        </button>
-        <button class="topic-btn" onclick="ask('Career Development Center CDC appointments jobs internships')">
-          <div class="topic-icon" style="background:#f3e5f5">💼</div>
-          <div class="topic-info"><h4>Career Development</h4><p>Jobs & internships</p></div>
-        </button>
-        <button class="topic-btn" onclick="ask('Health and wellness counseling services at UNH')">
-          <div class="topic-icon" style="background:#e8f5e9">🏥</div>
-          <div class="topic-info"><h4>Health & Wellness</h4><p>Health center info</p></div>
-        </button>
-        <button class="topic-btn" onclick="ask('International students CPT OPT visa ISSS services at UNH')">
-          <div class="topic-icon" style="background:#e3f2fd">🌍</div>
-          <div class="topic-info"><h4>International Students</h4><p>CPT, OPT & visas</p></div>
-        </button>
-        <button class="topic-btn" onclick="ask('Graduate programs and admissions at UNH')">
-          <div class="topic-icon" style="background:#ede7f6">🎓</div>
-          <div class="topic-info"><h4>Graduate Programs</h4><p>Masters & PhD</p></div>
-        </button>
-        <button class="topic-btn" onclick="ask('Research labs groups and opportunities at UNH')">
-          <div class="topic-icon" style="background:#e0f7fa">🔬</div>
-          <div class="topic-info"><h4>Research</h4><p>Labs & opportunities</p></div>
-        </button>
+        <button class="topic-btn" onclick="ask('What academic programs and majors does UNH offer?')"><div class="topic-icon" style="background:#eef2ff">🎓</div><div class="topic-info"><h4>Academic Programs</h4><p>Degrees & majors</p></div></button>
+        <button class="topic-btn" onclick="ask('How do I apply to UNH and what are the admissions requirements?')"><div class="topic-icon" style="background:#e8f5e9">📋</div><div class="topic-info"><h4>Admissions</h4><p>Apply & requirements</p></div></button>
+        <button class="topic-btn" onclick="ask('What is the tuition cost and financial aid options at UNH?')"><div class="topic-icon" style="background:#fce4ec">💰</div><div class="topic-info"><h4>Tuition & Financial Aid</h4><p>Costs & scholarships</p></div></button>
+        <button class="topic-btn" onclick="ask('Academic calendar spring semester key dates and deadlines')"><div class="topic-icon" style="background:#fff3e0">📅</div><div class="topic-info"><h4>Academic Calendar</h4><p>Dates & deadlines</p></div></button>
+        <button class="topic-btn" onclick="ask('What events are happening at UNH this week?')"><div class="topic-icon" style="background:#e8eaf6">🎉</div><div class="topic-info"><h4>Campus Events</h4><p>Upcoming activities</p></div></button>
+        <button class="topic-btn" onclick="ask('What dining options and food is available on campus?')"><div class="topic-icon" style="background:#fff8e1">🍽️</div><div class="topic-info"><h4>Dining & Food</h4><p>Meals & hours</p></div></button>
+        <button class="topic-btn" onclick="ask('Campus buildings and locations at UNH')"><div class="topic-icon" style="background:#e6f4ea">🏢</div><div class="topic-info"><h4>Campus Buildings</h4><p>Find any location</p></div></button>
+        <button class="topic-btn" onclick="ask('Student life housing clubs activities at UNH')"><div class="topic-icon" style="background:#fce4ec">🏠</div><div class="topic-info"><h4>Student Life</h4><p>Housing, clubs & more</p></div></button>
+        <button class="topic-btn" onclick="ask('IT support UIS canvas MFA wifi printing campus card')"><div class="topic-icon" style="background:#e3f2fd">💻</div><div class="topic-info"><h4>IT Support</h4><p>Canvas, MFA & WiFi</p></div></button>
+        <button class="topic-btn" onclick="ask('Career Development Center CDC appointments jobs internships')"><div class="topic-icon" style="background:#f3e5f5">💼</div><div class="topic-info"><h4>Career Development</h4><p>Jobs & internships</p></div></button>
+        <button class="topic-btn" onclick="ask('Health and wellness counseling services at UNH')"><div class="topic-icon" style="background:#e8f5e9">🏥</div><div class="topic-info"><h4>Health & Wellness</h4><p>Health center info</p></div></button>
+        <button class="topic-btn" onclick="ask('International students CPT OPT visa ISSS services at UNH')"><div class="topic-icon" style="background:#e3f2fd">🌍</div><div class="topic-info"><h4>International Students</h4><p>CPT, OPT & visas</p></div></button>
+        <button class="topic-btn" onclick="ask('Graduate programs and admissions at UNH')"><div class="topic-icon" style="background:#ede7f6">🎓</div><div class="topic-info"><h4>Graduate Programs</h4><p>Masters & PhD</p></div></button>
+        <button class="topic-btn" onclick="ask('Research labs groups and opportunities at UNH')"><div class="topic-icon" style="background:#e0f7fa">🔬</div><div class="topic-info"><h4>Research</h4><p>Labs & opportunities</p></div></button>
       </div>
       <div class="divider"></div>
       <div class="sidebar-section">
@@ -153,12 +120,12 @@
         <button class="topic-btn" onclick="ask('How do I book a CDC appointment?')"><div class="topic-info" style="padding-left:4px"><h4>📅 Book CDC appointment?</h4></div></button>
         <button class="topic-btn" onclick="ask('How do I connect to UNH WiFi?')"><div class="topic-info" style="padding-left:4px"><h4>📶 Connect to UNH WiFi?</h4></div></button>
         <button class="topic-btn" onclick="ask('What dining options are available on campus?')"><div class="topic-info" style="padding-left:4px"><h4>🍽️ Campus dining options?</h4></div></button>
-        <button class="topic-btn" onclick="ask('How do I register for classes at UNH?')"><div class="topic-info" style="padding-left:4px"><h4>📚 How to register for classes?</h4></div></button>
-        <button class="topic-btn" onclick="ask('What parking options are available at UNH?')"><div class="topic-info" style="padding-left:4px"><h4>🚗 Campus parking info?</h4></div></button>
+        <button class="topic-btn" onclick="ask('What events are happening at UNH?')"><div class="topic-info" style="padding-left:4px"><h4>🎉 Upcoming events?</h4></div></button>
+        <button class="topic-btn" onclick="ask('How do I register for classes at UNH?')"><div class="topic-info" style="padding-left:4px"><h4>📚 Register for classes?</h4></div></button>
       </div>
       <div class="info-card">
         <h4>🎓 About Charlie</h4>
-        <p>AI-powered assistant for UNH. Knows all 2,285 faculty & staff, every academic program, admissions, dining, housing, IT support, and more. Available 24/7.</p>
+        <p>AI-powered assistant for UNH. Knows all 2,285 faculty & staff, every program, admissions, dining, events, housing, IT support, and more. Available 24/7.</p>
       </div>
     </div>
     <div class="chat-main">
@@ -166,14 +133,14 @@
         <div class="welcome" id="welcome">
           <div class="welcome-avatar">🎓</div>
           <h2>Hi, I'm Charlie!</h2>
-          <p>Your AI assistant for the University of New Haven. Ask me anything — programs, professors, admissions, housing, dining, IT support, and more.</p>
+          <p>Your AI assistant for the University of New Haven. Ask me anything — programs, professors, events, dining, admissions, IT support, and more.</p>
           <div class="chips">
             <button class="chip" onclick="ask('What programs does UNH offer?')">🎓 Academic programs</button>
             <button class="chip" onclick="ask('Who is Professor Pithadia?')">👤 Find a professor</button>
-            <button class="chip" onclick="ask('How do I apply to UNH?')">📋 How to apply</button>
-            <button class="chip" onclick="ask('What is the tuition at UNH?')">💰 Tuition & aid</button>
-            <button class="chip" onclick="ask('How do I set up MFA?')">🔐 MFA setup</button>
+            <button class="chip" onclick="ask('What events are happening at UNH?')">🎉 Campus events</button>
             <button class="chip" onclick="ask('What dining options are on campus?')">🍽️ Campus dining</button>
+            <button class="chip" onclick="ask('How do I apply to UNH?')">📋 How to apply</button>
+            <button class="chip" onclick="ask('How do I set up MFA?')">🔐 MFA setup</button>
           </div>
         </div>
       </div>
@@ -193,13 +160,50 @@
   const API = "https://ask-charlie-production.up.railway.app";
   let history = [], busy = false;
   const msgs = document.getElementById('messages');
-  const inp = document.getElementById('inp');
+  const inp  = document.getElementById('inp');
   const sbtn = document.getElementById('sbtn');
   const time = () => new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
 
+  // Follow-up suggestions per topic
+  const SUGGESTIONS = {
+    professor: ["What courses do they teach?","What is their email?","Who else is in this department?"],
+    programs:  ["How do I apply?","What is the tuition?","Are there online options?"],
+    admissions:["What are the deadlines?","What documents do I need?","Is there financial aid?"],
+    dining:    ["What are the hours?","Do they have vegetarian options?","Where is it located?"],
+    events:    ["How do I register?","Are there more events this week?","Where is it held?"],
+    housing:   ["How do I apply for housing?","What is the cost?","Are there meal plans?"],
+    it:        ["How do I contact IT support?","What is the UIS phone number?","How do I reset my password?"],
+    health:    ["What are the hours?","How do I make an appointment?","Is counseling available?"],
+  };
+
+  function getSuggestions(text) {
+    const t = text.toLowerCase();
+    if (t.includes("professor") || t.includes("faculty") || t.includes("dr.") || t.includes("who is"))
+      return SUGGESTIONS.professor;
+    if (t.includes("program") || t.includes("major") || t.includes("degree"))
+      return SUGGESTIONS.programs;
+    if (t.includes("apply") || t.includes("admission") || t.includes("enroll"))
+      return SUGGESTIONS.admissions;
+    if (t.includes("dining") || t.includes("food") || t.includes("eat") || t.includes("meal"))
+      return SUGGESTIONS.dining;
+    if (t.includes("event") || t.includes("happening") || t.includes("activity"))
+      return SUGGESTIONS.events;
+    if (t.includes("housing") || t.includes("dorm") || t.includes("residential"))
+      return SUGGESTIONS.housing;
+    if (t.includes("canvas") || t.includes("mfa") || t.includes("wifi") || t.includes("it support"))
+      return SUGGESTIONS.it;
+    if (t.includes("health") || t.includes("counseling") || t.includes("wellness"))
+      return SUGGESTIONS.health;
+    return [];
+  }
+
   function fmt(t) {
-    t = t.replace(/\[\d+\]/g, '');  // remove [1], [2], [3] etc
-    return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    // Remove citation numbers [1], [2], etc — must happen before URL processing
+    t = t.replace(/\[\d+\]/g, '');
+    // Clean up URLs that might have gotten brackets attached
+    t = t.replace(/(https?:\/\/[^\s<\]]+)\]*/g, '$1');
+    return t
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
       .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
       .replace(/\*(.*?)\*/g,'<em>$1</em>')
       .replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank">$1</a>')
@@ -215,10 +219,14 @@
     msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight;
   }
 
-  function addBot(text) {
+  function addBot(text, question='') {
     const d = document.createElement('div');
     d.className = 'msg-row';
-    d.innerHTML = `<div class="msg-av bot">🎓</div><div class="msg-col"><div class="bubble bot">${fmt(text)}</div><div class="msg-time">Charlie · ${time()}</div></div>`;
+    const suggestions = getSuggestions(question);
+    const suggestHtml = suggestions.length
+      ? `<div class="suggestions">${suggestions.map(s=>`<button class="suggestion-btn" onclick="ask('${s}')">${s}</button>`).join('')}</div>`
+      : '';
+    d.innerHTML = `<div class="msg-av bot">🎓</div><div class="msg-col"><div class="bubble bot">${fmt(text)}</div>${suggestHtml}<div class="msg-time">Charlie · ${time()}</div></div>`;
     msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight;
     return d.querySelector('.bubble');
   }
@@ -241,26 +249,21 @@
     history.push({role:'user',content:text});
     showTyping();
     try {
-      const res = await fetch(`${API}/chat`, {
+      const res = await fetch(`${API}/chat`,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({message:text, history:history.slice(0,-1)})
+        body:JSON.stringify({message:text,history:history.slice(0,-1)})
       });
       hideTyping();
-      const bubble = addBot('');
+      const bubble = addBot('', text);
       let full = '';
       const reader = res.body.getReader(), dec = new TextDecoder();
-      while(true) {
-        const {done,value} = await reader.read();
-        if(done) break;
-        for(const line of dec.decode(value).split('\n')) {
+      while(true){
+        const {done,value} = await reader.read(); if(done) break;
+        for(const line of dec.decode(value).split('\n')){
           if(!line.startsWith('data: ')) continue;
-          const d = line.slice(6).trim();
-          if(d==='[DONE]') break;
-          try {
-            const t = JSON.parse(d).text;
-            if(t){ full+=t; bubble.innerHTML=fmt(full); msgs.scrollTop=msgs.scrollHeight; }
-          } catch(_){}
+          const d = line.slice(6).trim(); if(d==='[DONE]') break;
+          try{const t=JSON.parse(d).text;if(t){full+=t;bubble.innerHTML=fmt(full);msgs.scrollTop=msgs.scrollHeight;}}catch(_){}
         }
       }
       history.push({role:'assistant',content:full});
@@ -272,15 +275,10 @@
     busy=false; sbtn.disabled=false; inp.focus();
   }
 
-  sbtn.addEventListener('click', ()=>ask(inp.value));
-  inp.addEventListener('keydown', e=>{
-    if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); ask(inp.value); }
-  });
-  inp.addEventListener('input', ()=>{
-    inp.style.height='auto';
-    inp.style.height=Math.min(inp.scrollHeight,120)+'px';
-  });
-  window.addEventListener('load', ()=>inp.focus());
+  sbtn.addEventListener('click',()=>ask(inp.value));
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();ask(inp.value);}});
+  inp.addEventListener('input',()=>{inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,120)+'px';});
+  window.addEventListener('load',()=>inp.focus());
 </script>
 </body>
 </html>
