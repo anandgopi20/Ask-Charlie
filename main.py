@@ -24,7 +24,7 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 
 ROOT           = Path(__file__).parent
 OPENROUTER_KEY = os.environ.get("OPENROUTER_API_KEY", "")
-MODEL          = "google/gemini-2.0-flash-exp:free"
+MODEL          = "openrouter/auto""
 
 SYSTEM_PROMPT = """You are Charlie, the friendly and knowledgeable AI assistant for the University of New Haven (UNH).
 You help students, faculty, staff, and visitors with ANY question about UNH.
