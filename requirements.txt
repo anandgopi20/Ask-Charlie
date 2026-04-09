@@ -1,7 +1,8 @@
 fastapi
-uvicorn[standard]
+uvicorn
 httpx
 requests
 beautifulsoup4
 lxml
 pydantic
+urllib3
