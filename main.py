@@ -13,7 +13,6 @@ import re
 import os
 import json
 import csv
-import asyncio
 import threading
 import time as time_module
 from bs4 import BeautifulSoup
@@ -31,22 +30,23 @@ SYSTEM_PROMPT = """You are Charlie, the friendly and knowledgeable AI assistant 
 You help students, faculty, staff, and visitors with ANY question about UNH.
 
 CRITICAL FORMATTING RULES:
-- NEVER use citation numbers like [1], [2], [3] anywhere — not next to text, not next to URLs
+- NEVER use citation numbers like [1], [2], [3] anywhere
 - URLs must be clean with NO brackets or numbers after them
-- Always use bullet points for lists
+- Use bullet points for lists
 - Keep answers under 250 words unless truly needed
 - Be warm, friendly, and helpful
 - Use provided context only — never make up facts
 - For buildings include Google Maps link
 - If unsure: direct to newhaven.edu or (203) 932-7000
-- Always end responses about professors, programs, or services with one helpful follow-up question
+- End responses about professors or programs with one helpful follow-up question
+- If you cannot find specific info, say so clearly and give the right contact — do NOT list random buildings
 
 Key contacts:
 - Main: (203) 932-7000 | UIS: 203-932-7371
 - CDC: 203-479-4858 | careerdevelopmentcenter@newhaven.edu
 - Admissions: admissions@newhaven.edu | Health: (203) 932-7079
 
-PROFESSOR FORMAT — when you find a person in the directory, format like this:
+PROFESSOR FORMAT — when you find a person in the directory:
 👤 **[Full Name]**
 🏫 **Department:** [Department]
 📌 **Title:** [Title]
@@ -54,30 +54,19 @@ PROFESSOR FORMAT — when you find a person in the directory, format like this:
 🏢 **Office:** [Building + Room or "Not listed"]
 📧 **Email:** [email or "Not listed"]
 🔗 **Profile:** https://www.newhaven.edu/directory/index.php
-
-EVENTS FORMAT — when you have events data, format like:
-📅 **[Event Name]**
-🕐 **When:** [Date & Time]
-📍 **Where:** [Location]
-
-DINING FORMAT — when you have dining data:
-🍽️ **[Dining Location]**
-🕐 **Hours:** [Hours]
-📍 **Location:** [Location]
 """
 
 # ── Data stores ───────────────────────────────────────────────────────────────
-_knowledge:   list = []
-_buildings:   list = []
-_professors:  list = []
-_events:      list = []
-_dining:      list = []
-_ready              = False
-_crawl_done         = False
-_pages_crawled      = 0
-_last_prof_update   = None
+_knowledge:        list = []
+_buildings:        list = []
+_professors:       list = []
+_events:           list = []
+_ready                  = False
+_crawl_done             = False
+_pages_crawled          = 0
+_last_prof_update       = None
 
-# ── UNH pages ────────────────────────────────────────────────────────────────
+# ── UNH pages to fetch ────────────────────────────────────────────────────────
 UNH_PAGES = [
     ("academics",       "https://www.newhaven.edu/academics/index.php"),
     ("programs",        "https://www.newhaven.edu/academics/programs/index.php"),
@@ -107,7 +96,6 @@ UNH_PAGES = [
     ("veterans",        "https://www.newhaven.edu/veterans/index.php"),
     ("orientation",     "https://www.newhaven.edu/student-life/orientation/index.php"),
     ("commencement",    "https://www.newhaven.edu/commencement/index.php"),
-    ("library",         "https://www.newhaven.edu/student-life/index.php"),
     ("accessibility",   "https://www.newhaven.edu/student-life/accessibility-resources-center/index.php"),
     ("uis-mfa",         "https://studentsupport.newhaven.edu/mfa/"),
     ("uis-canvas",      "https://studentsupport.newhaven.edu/canvas/"),
@@ -122,8 +110,7 @@ def clean_html(html: str) -> str:
     for tag in soup(["script","style","noscript","header","footer",
                      "nav","aside","form","iframe","svg","button"]):
         tag.decompose()
-    text = soup.get_text("\n")
-    return re.sub(r"\n{3,}", "\n\n", text).strip()
+    return re.sub(r"\n{3,}", "\n\n", soup.get_text("\n")).strip()
 
 def chunk_text(text: str, max_chars: int = 1000) -> list:
     chunks, i = [], 0
@@ -146,16 +133,14 @@ def fetch_page(label: str, url: str):
     except:
         pass
 
-# ── Live data fetchers ────────────────────────────────────────────────────────
+# ── Live data ─────────────────────────────────────────────────────────────────
 def fetch_live_events():
-    """Fetch upcoming UNH events."""
     global _events
     try:
         r = requests.get("https://www.newhaven.edu/events/index.php",
                          timeout=10, headers={"User-Agent":"AskCharlieBot/3.0"})
         soup = BeautifulSoup(r.text, "lxml")
         events = []
-        # Look for event items in common patterns
         for item in soup.select(".event-item, .event, article.event, .events-list li")[:10]:
             title = item.select_one("h2, h3, h4, .event-title, .title")
             date  = item.select_one(".date, .event-date, time")
@@ -163,51 +148,46 @@ def fetch_live_events():
             link  = item.select_one("a")
             if title:
                 events.append({
-                    "title": title.get_text(strip=True),
-                    "date":  date.get_text(strip=True) if date else "See website",
+                    "title":    title.get_text(strip=True),
+                    "date":     date.get_text(strip=True) if date else "See website",
                     "location": loc.get_text(strip=True) if loc else "UNH Campus",
-                    "url": ("https://www.newhaven.edu" + link["href"]
-                            if link and link.get("href","").startswith("/") else
-                            link["href"] if link else "https://www.newhaven.edu/events/")
+                    "url":      (("https://www.newhaven.edu" + link["href"])
+                                 if link and link.get("href","").startswith("/")
+                                 else (link["href"] if link else "https://www.newhaven.edu/events/"))
                 })
         _events = events
-        # Also add to knowledge
         if events:
-            text = "Upcoming UNH Events:\n" + "\n".join(
-                f"- {e['title']} | {e['date']} | {e['location']}" for e in events)
-            _knowledge.append({"text": text, "type": "events", "url": "https://www.newhaven.edu/events/"})
+            _knowledge.append({"text": "Upcoming UNH Events:\n" + "\n".join(
+                f"- {e['title']} | {e['date']} | {e['location']}" for e in events),
+                "type": "events", "url": "https://www.newhaven.edu/events/"})
         print(f"Fetched {len(_events)} events")
     except Exception as e:
         print(f"Events fetch failed: {e}")
 
 def fetch_live_dining():
-    """Fetch dining info."""
-    global _dining
     try:
-        r = requests.get("https://www.newhaven.edu/dining",
-                         timeout=10, headers={"User-Agent":"AskCharlieBot/3.0"})
-        soup = BeautifulSoup(r.text, "lxml")
-        text = clean_html(r.text)
-        for chunk in chunk_text(text):
-            _knowledge.append({"text": chunk, "type": "dining", "url": "https://www.newhaven.edu/dining"})
+        r = requests.get("https://www.newhaven.edu/dining", timeout=10,
+                         headers={"User-Agent":"AskCharlieBot/3.0"})
+        for chunk in chunk_text(clean_html(r.text)):
+            _knowledge.append({"text": chunk, "type": "dining",
+                                "url": "https://www.newhaven.edu/dining"})
         print("Fetched dining info")
     except Exception as e:
         print(f"Dining fetch failed: {e}")
 
-# ── Professor auto-update ─────────────────────────────────────────────────────
+# ── Professor management ──────────────────────────────────────────────────────
 def load_professors():
     global _professors, _last_prof_update
     path = ROOT / "data" / "professors.json"
     if path.exists():
         _professors = json.loads(path.read_text(encoding="utf-8"))
         _last_prof_update = datetime.now().strftime("%Y-%m-%d %H:%M")
-        print(f"Loaded {len(_professors)} professors (updated: {_last_prof_update})")
+        print(f"Loaded {len(_professors)} professors")
     else:
         _professors = []
         print("No professors.json found")
 
 def run_professor_scraper():
-    """Run the scraper to refresh professor data."""
     scraper = ROOT / "scraper" / "scrape_unh_directory.py"
     if scraper.exists():
         import subprocess
@@ -215,22 +195,17 @@ def run_professor_scraper():
         subprocess.run(["python3", str(scraper)], timeout=1800)
         load_professors()
         print("Professor data refreshed!")
-    else:
-        print("Scraper not found — skipping auto-update")
 
 def weekly_professor_update():
-    """Auto-refresh professor data every 7 days."""
     while True:
-        time_module.sleep(7 * 24 * 60 * 60)  # wait 7 days
+        time_module.sleep(7 * 24 * 60 * 60)
         run_professor_scraper()
 
 # ── Background thread ─────────────────────────────────────────────────────────
 def background_fetch():
     global _crawl_done, _pages_crawled
-    # Fetch live data first
     fetch_live_events()
     fetch_live_dining()
-    # Then fetch all UNH pages
     for label, url in UNH_PAGES:
         fetch_page(label, url)
         _pages_crawled += 1
@@ -240,11 +215,9 @@ def background_fetch():
 # ── Search ────────────────────────────────────────────────────────────────────
 def keyword_search(query: str, k: int = 6) -> list:
     words = set(re.findall(r'\w+', query.lower()))
-    scored = []
-    for doc in _knowledge:
-        score = len(words & set(re.findall(r'\w+', doc["text"].lower())))
-        if score > 0:
-            scored.append((score, doc["text"]))
+    scored = [(len(words & set(re.findall(r'\w+', doc["text"].lower()))), doc["text"])
+              for doc in _knowledge]
+    scored = [(s, t) for s, t in scored if s > 0]
     scored.sort(reverse=True)
     return [t for _, t in scored[:k]]
 
@@ -260,9 +233,9 @@ PERSON_RE = re.compile(
     r"instructor|lecturer|advisor|chair|dean|who is|contact|email|"
     r"phone|office|staff|teach|teaches)\b", re.IGNORECASE
 )
-STOPWORDS = {"who","is","the","a","an","for","of","in","at","me","tell",
-             "find","get","what","are","does","do","his","her","their",
-             "this","that","can","you","i","my","how","about","give","show"}
+STOPWORDS = {"who","is","the","a","an","for","of","in","at","me","tell","find",
+             "get","what","are","does","do","his","her","their","this","that",
+             "can","you","i","my","how","about","give","show","need","want"}
 
 def _score(p: dict, terms: list) -> int:
     score = 0
@@ -284,8 +257,7 @@ def search_professors(query: str) -> list:
              if w not in STOPWORDS and len(w) > 2]
     if not terms:
         return []
-    scored = sorted([(p, _score(p, terms)) for p in _professors],
-                    key=lambda x: -x[1])
+    scored = sorted([(p, _score(p, terms)) for p in _professors], key=lambda x: -x[1])
     return [p for p, s in scored if s > 0][:5]
 
 def professor_context(msg: str) -> str:
@@ -296,8 +268,6 @@ def professor_context(msg: str) -> str:
         return ""
     lines = ["[DIRECTORY RESULTS — format each as a card with emoji labels]"]
     for p in results:
-        # Build profile URL from name
-        name_slug = (p.get("name") or "").lower().replace(",","").replace(" ","-")
         lines.append(
             f"Name: {p.get('name','?')} | "
             f"Dept: {p.get('department','N/A')} | "
@@ -310,16 +280,18 @@ def professor_context(msg: str) -> str:
         )
     return "\n".join(lines)
 
-# ── Events/Dining context ─────────────────────────────────────────────────────
-EVENTS_RE = re.compile(r"\b(event|events|happening|schedule|calendar|activities|things to do)\b", re.IGNORECASE)
-DINING_RE = re.compile(r"\b(food|eat|dining|meal|lunch|dinner|breakfast|cafe|cafeteria|menu|hungry)\b", re.IGNORECASE)
+EVENTS_RE = re.compile(
+    r"\b(event|events|happening|schedule|calendar|activities|things to do)\b",
+    re.IGNORECASE
+)
 
 def events_context(msg: str) -> str:
     if not EVENTS_RE.search(msg) or not _events:
         return ""
     lines = ["[UPCOMING UNH EVENTS]"]
     for e in _events[:5]:
-        lines.append(f"Event: {e['title']} | Date: {e['date']} | Location: {e['location']} | URL: {e['url']}")
+        lines.append(f"Event: {e['title']} | Date: {e['date']} | "
+                     f"Location: {e['location']} | URL: {e['url']}")
     return "\n".join(lines)
 
 # ── Startup ───────────────────────────────────────────────────────────────────
@@ -327,7 +299,7 @@ def events_context(msg: str) -> str:
 async def startup():
     global _ready
 
-    # Buildings CSV
+    # Buildings
     csv_path = ROOT / "data" / "buildings.csv"
     if csv_path.exists():
         with open(csv_path, newline="", encoding="utf-8") as f:
@@ -342,8 +314,9 @@ async def startup():
                                               f"{row.get('category','')}. "
                                               f"{row.get('notes','')} Maps: {maps}",
                                        "type":"building","url":""})
+        print(f"Loaded {len(_buildings)} buildings")
 
-    # CDC markdown
+    # CDC
     cdc_path = ROOT / "data" / "cdc.md"
     if cdc_path.exists():
         for chunk in chunk_text(cdc_path.read_text(encoding="utf-8")):
@@ -352,14 +325,12 @@ async def startup():
     # Professors
     load_professors()
 
-    # Mark ready immediately
+    # Ready immediately — Railway healthcheck passes
     _ready = True
-    print("=== Ask Charlie Stage 3 READY ===")
+    print(f"=== Ask Charlie READY | Model: {MODEL} ===")
 
-    # Background fetch thread
+    # Background threads
     threading.Thread(target=background_fetch, daemon=True).start()
-
-    # Weekly professor auto-update thread
     threading.Thread(target=weekly_professor_update, daemon=True).start()
 
 # ── Chat ───────────────────────────────────────────────────────────────────────
@@ -372,12 +343,11 @@ async def chat(req: ChatRequest):
     if not OPENROUTER_KEY:
         raise HTTPException(500, "OPENROUTER_API_KEY not set")
 
-    question = req.message.strip()
+    question  = req.message.strip()
+    prof_ctx  = professor_context(question)
+    evt_ctx   = events_context(question)
+    buildings = find_buildings(question)
 
-    # Build context
-    prof_ctx   = professor_context(question)
-    evt_ctx    = events_context(question)
-    buildings  = find_buildings(question)
     bctx = ""
     if buildings:
         bctx = "Campus buildings:\n" + "\n".join(
@@ -409,56 +379,73 @@ async def chat(req: ChatRequest):
                         "X-Title": "Ask Charlie UNH",
                     },
                     json={
-                        "model": MODEL,
-                        "messages": messages,
+                        "model":      MODEL,
+                        "messages":   messages,
                         "max_tokens": 600,
-                        "stream": True,
+                        "stream":     True,
                     },
                 ) as resp:
-                    async for line in resp.aiter_lines():
-                        if not line.startswith("data: "): continue
-                        d = line[6:].strip()
-                        if d == "[DONE]": break
-                        try:
-                            t = json.loads(d)["choices"][0]["delta"].get("content","")
-                            if t: yield f"data: {json.dumps({'text':t})}\n\n"
-                        except: continue
+                    if resp.status_code != 200:
+                        error_body = await resp.aread()
+                        print(f"OpenRouter error {resp.status_code}: {error_body.decode()}")
+                        yield f"data: {json.dumps({'text': 'Sorry, AI service is temporarily unavailable. Please try again in a moment.'})}\n\n"
+                    else:
+                        async for line in resp.aiter_lines():
+                            if not line.startswith("data: "):
+                                continue
+                            d = line[6:].strip()
+                            if d == "[DONE]":
+                                break
+                            try:
+                                chunk = json.loads(d)
+                                t = chunk["choices"][0]["delta"].get("content","")
+                                if t:
+                                    yield f"data: {json.dumps({'text':t})}\n\n"
+                            except json.JSONDecodeError:
+                                continue
+                            except (KeyError, IndexError):
+                                continue
         except Exception as e:
-            yield f"data: {json.dumps({'text': f'Sorry, I had trouble connecting. Please try again!'})}\n\n"
+            print(f"Chat error: {e}")
+            yield f"data: {json.dumps({'text': 'Sorry, I had trouble connecting. Please try again!'})}\n\n"
         yield "data: [DONE]\n\n"
 
     return StreamingResponse(generate(), media_type="text/event-stream")
 
 # ── Endpoints ──────────────────────────────────────────────────────────────────
+@app.get("/health")
+def health():
+    return {
+        "status":             "ok",
+        "ready":              _ready,
+        "model":              MODEL,
+        "crawl_done":         _crawl_done,
+        "pages_crawled":      _pages_crawled,
+        "knowledge_chunks":   len(_knowledge),
+        "professors":         len(_professors),
+        "buildings":          len(_buildings),
+        "events":             len(_events),
+        "last_prof_update":   _last_prof_update,
+    }
+
 @app.get("/debug")
 async def debug():
-    """Test the AI model directly"""
+    """Test OpenRouter connection directly."""
     if not OPENROUTER_KEY:
-        return {"error": "No API key"}
+        return {"error": "OPENROUTER_API_KEY not set"}
     try:
         async with httpx.AsyncClient(timeout=30) as client:
             resp = await client.post(
                 "https://openrouter.ai/api/v1/chat/completions",
                 headers={"Authorization": f"Bearer {OPENROUTER_KEY}",
                          "Content-Type": "application/json"},
-                json={"model": MODEL, "messages": [{"role":"user","content":"say hi"}],
-                      "max_tokens": 50, "stream": False}
+                json={"model": MODEL,
+                      "messages": [{"role":"user","content":"say hi in one word"}],
+                      "max_tokens": 20, "stream": False}
             )
             return {"model": MODEL, "status": resp.status_code, "response": resp.json()}
     except Exception as e:
         return {"error": str(e)}
-def health():
-    return {
-        "status": "ok",
-        "ready": _ready,
-        "crawl_done": _crawl_done,
-        "pages_crawled": _pages_crawled,
-        "knowledge_chunks": len(_knowledge),
-        "professors": len(_professors),
-        "buildings": len(_buildings),
-        "events": len(_events),
-        "last_professor_update": _last_prof_update,
-    }
 
 @app.get("/professors/search")
 def prof_search(q: str):
@@ -475,10 +462,10 @@ def prof_reload():
 
 @app.post("/professors/refresh")
 def prof_refresh():
-    """Trigger a full re-scrape of professor data."""
     threading.Thread(target=run_professor_scraper, daemon=True).start()
-    return {"message": "Professor scraper started in background — check /health in 15-20 mins"}
+    return {"message": "Scraper started — check /health in 15-20 mins"}
 
 @app.get("/")
 def root():
-    return {"message": "Ask Charlie Stage 3 — UNH Assistant", "ready": _ready}
+    return {"message": "Ask Charlie — UNH Assistant",
+            "ready": _ready, "model": MODEL}
