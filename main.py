@@ -1,6 +1,6 @@
 """
 Ask Charlie — University of New Haven Chatbot Backend
-Stage 3: Using Groq API for fast, reliable, free AI responses
+Using Google AI (Gemini 2.0 Flash) — same quality as before, completely free
 """
 
 from fastapi import FastAPI, HTTPException
@@ -22,10 +22,10 @@ from datetime import datetime
 app = FastAPI(title="Ask Charlie API")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
-ROOT      = Path(__file__).parent
-GROQ_KEY  = os.environ.get("GROQ_API_KEY", "")
-MODEL     = os.environ.get("MODEL", "llama-3.3-70b-versatile")
-GROQ_URL  = "https://api.groq.com/openai/v1/chat/completions"
+ROOT          = Path(__file__).parent
+GOOGLE_KEY    = os.environ.get("GOOGLE_API_KEY", "")
+MODEL         = os.environ.get("MODEL", "gemini-2.0-flash")
+GOOGLE_URL    = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:streamGenerateContent?alt=sse&key={GOOGLE_KEY}"
 
 SYSTEM_PROMPT = """You are Charlie, the friendly and knowledgeable AI assistant for the University of New Haven (UNH).
 You help students, faculty, staff, and visitors with ANY question about UNH.
@@ -55,6 +55,16 @@ PROFESSOR FORMAT — when you find a person in the directory:
 🏢 **Office:** [Building + Room or "Not listed"]
 📧 **Email:** [email or "Not listed"]
 🔗 **Profile:** https://www.newhaven.edu/directory/index.php
+
+UNH DINING OPTIONS:
+- Bartels & Stoud Dining Hall (The Marketplace): Mon-Fri 7am-8pm, Sat-Sun 10am-7pm, Bartels Campus Center, 11 stations including breakfast/deli/pizza/grill/vegan
+- Jazzman's Cafe and Bakery: Mon-Fri 7am-6pm, Bartels Campus Center, coffee/pastries/sandwiches
+- Food on Demand (FoD): Varies seasonally, Westside Hall, fixed menu/unlimited salad/dessert
+- Moe's Southwest Grill: Varies, Bergami Hall, burritos/tacos/quesadillas
+- ReCharge Convenience Market (C Store): 8am-2:30pm, Sheffield Hall, snacks/groceries/dining dollars
+- Smooth Haven: 8am-5:30pm, smoothies and healthy options
+- Wow (Wings Over West Haven): Varies, Bergami Hall, wings/burgers/quesadillas/salads
+- More info: https://newhaven.sodexomyway.com
 """
 
 # ── Data stores ───────────────────────────────────────────────────────────────
@@ -157,26 +167,9 @@ def fetch_live_events():
                                  else (link["href"] if link else "https://www.newhaven.edu/events/"))
                 })
         _events = events
-        if events:
-            _knowledge.append({
-                "text": "Upcoming UNH Events:\n" + "\n".join(
-                    f"- {e['title']} | {e['date']} | {e['location']}" for e in events),
-                "type": "events", "url": "https://www.newhaven.edu/events/"
-            })
         print(f"Fetched {len(_events)} events")
     except Exception as e:
         print(f"Events fetch failed: {e}")
-
-def fetch_live_dining():
-    try:
-        r = requests.get("https://www.newhaven.edu/dining", timeout=10,
-                         headers={"User-Agent":"AskCharlieBot/3.0"})
-        for chunk in chunk_text(clean_html(r.text)):
-            _knowledge.append({"text": chunk, "type": "dining",
-                                "url": "https://www.newhaven.edu/dining"})
-        print("Fetched dining info")
-    except Exception as e:
-        print(f"Dining fetch failed: {e}")
 
 # ── Professor management ──────────────────────────────────────────────────────
 def load_professors():
@@ -188,16 +181,13 @@ def load_professors():
         print(f"Loaded {len(_professors)} professors")
     else:
         _professors = []
-        print("No professors.json found")
 
 def run_professor_scraper():
     scraper = ROOT / "scraper" / "scrape_unh_directory.py"
     if scraper.exists():
         import subprocess
-        print("Running professor scraper...")
         subprocess.run(["python3", str(scraper)], timeout=1800)
         load_professors()
-        print("Professor data refreshed!")
 
 def weekly_professor_update():
     while True:
@@ -208,7 +198,6 @@ def weekly_professor_update():
 def background_fetch():
     global _crawl_done, _pages_crawled
     fetch_live_events()
-    fetch_live_dining()
     for label, url in UNH_PAGES:
         fetch_page(label, url)
         _pages_crawled += 1
@@ -300,7 +289,10 @@ def events_context(msg: str) -> str:
 # ── Startup ───────────────────────────────────────────────────────────────────
 @app.on_event("startup")
 async def startup():
-    global _ready
+    global _ready, GOOGLE_URL
+
+    # Update URL with actual key
+    GOOGLE_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:streamGenerateContent?alt=sse&key={GOOGLE_KEY}"
 
     # Buildings
     csv_path = ROOT / "data" / "buildings.csv"
@@ -330,7 +322,7 @@ async def startup():
 
     # Ready immediately
     _ready = True
-    print(f"=== Ask Charlie READY | Model: {MODEL} | Provider: Groq ===")
+    print(f"=== Ask Charlie READY | Model: {MODEL} | Provider: Google AI ===")
 
     # Background threads
     threading.Thread(target=background_fetch, daemon=True).start()
@@ -343,8 +335,8 @@ class ChatRequest(BaseModel):
 
 @app.post("/chat")
 async def chat(req: ChatRequest):
-    if not GROQ_KEY:
-        raise HTTPException(500, "GROQ_API_KEY not set")
+    if not GOOGLE_KEY:
+        raise HTTPException(500, "GOOGLE_API_KEY not set")
 
     question  = req.message.strip()
     prof_ctx  = professor_context(question)
@@ -361,46 +353,54 @@ async def chat(req: ChatRequest):
     rctx = ("Context:\n" + "\n---\n".join(hits[:5])) if hits else ""
     ctx  = "\n\n".join(filter(None, [prof_ctx, evt_ctx, bctx, rctx]))
 
-    messages = [{"role":"system","content":SYSTEM_PROMPT}]
+    user_content = f"{ctx}\n\nQuestion: {question}" if ctx else question
+
+    # Google AI uses different message format
+    payload = {
+        "system_instruction": {"parts": [{"text": SYSTEM_PROMPT}]},
+        "contents": [],
+        "generationConfig": {
+            "maxOutputTokens": 600,
+            "temperature": 0.7,
+        }
+    }
+
+    # Add history
     for h in req.history[-6:]:
-        messages.append({"role":h["role"],"content":h["content"]})
-    messages.append({
-        "role":"user",
-        "content": f"{ctx}\n\nQuestion: {question}" if ctx else question
+        payload["contents"].append({
+            "role": "user" if h["role"] == "user" else "model",
+            "parts": [{"text": h["content"]}]
+        })
+
+    # Add current message
+    payload["contents"].append({
+        "role": "user",
+        "parts": [{"text": user_content}]
     })
+
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:streamGenerateContent?alt=sse&key={GOOGLE_KEY}"
 
     async def generate():
         try:
             async with httpx.AsyncClient(timeout=60) as client:
-                async with client.stream(
-                    "POST",
-                    GROQ_URL,
-                    headers={
-                        "Authorization": f"Bearer {GROQ_KEY}",
-                        "Content-Type":  "application/json",
-                    },
-                    json={
-                        "model":       MODEL,
-                        "messages":    messages,
-                        "max_tokens":  600,
-                        "stream":      True,
-                        "temperature": 0.7,
-                    },
-                ) as resp:
+                async with client.stream("POST", url, json=payload) as resp:
                     if resp.status_code != 200:
                         error_body = await resp.aread()
-                        print(f"Groq error {resp.status_code}: {error_body.decode()}")
+                        print(f"Google AI error {resp.status_code}: {error_body.decode()}")
                         yield f"data: {json.dumps({'text': 'Sorry, AI service is temporarily unavailable. Please try again.'})}\n\n"
                     else:
                         async for line in resp.aiter_lines():
                             if not line.startswith("data: "):
                                 continue
                             d = line[6:].strip()
-                            if d == "[DONE]":
-                                break
+                            if not d:
+                                continue
                             try:
                                 chunk = json.loads(d)
-                                t = chunk["choices"][0]["delta"].get("content","")
+                                t = (chunk.get("candidates",[{}])[0]
+                                     .get("content",{})
+                                     .get("parts",[{}])[0]
+                                     .get("text",""))
                                 if t:
                                     yield f"data: {json.dumps({'text':t})}\n\n"
                             except (json.JSONDecodeError, KeyError, IndexError):
@@ -419,7 +419,7 @@ def health():
         "status":           "ok",
         "ready":            _ready,
         "model":            MODEL,
-        "provider":         "Groq",
+        "provider":         "Google AI",
         "crawl_done":       _crawl_done,
         "pages_crawled":    _pages_crawled,
         "knowledge_chunks": len(_knowledge),
@@ -431,20 +431,17 @@ def health():
 
 @app.get("/debug")
 async def debug():
-    """Test Groq connection directly."""
-    if not GROQ_KEY:
-        return {"error": "GROQ_API_KEY not set"}
+    """Test Google AI connection directly."""
+    if not GOOGLE_KEY:
+        return {"error": "GOOGLE_API_KEY not set"}
     try:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent?key={GOOGLE_KEY}"
         async with httpx.AsyncClient(timeout=30) as client:
-            resp = await client.post(
-                GROQ_URL,
-                headers={"Authorization": f"Bearer {GROQ_KEY}",
-                         "Content-Type": "application/json"},
-                json={"model": MODEL,
-                      "messages": [{"role":"user","content":"say hi in one word"}],
-                      "max_tokens": 10, "stream": False}
-            )
-            return {"model": MODEL, "provider": "Groq",
+            resp = await client.post(url, json={
+                "contents": [{"role":"user","parts":[{"text":"say hi in one word"}]}],
+                "generationConfig": {"maxOutputTokens": 10}
+            })
+            return {"model": MODEL, "provider": "Google AI",
                     "status": resp.status_code, "response": resp.json()}
     except Exception as e:
         return {"error": str(e)}
@@ -470,4 +467,4 @@ def prof_refresh():
 @app.get("/")
 def root():
     return {"message": "Ask Charlie — UNH Assistant",
-            "ready": _ready, "model": MODEL, "provider": "Groq"}
+            "ready": _ready, "model": MODEL, "provider": "Google AI"}
