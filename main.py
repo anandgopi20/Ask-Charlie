@@ -23,8 +23,8 @@ app = FastAPI(title="Ask Charlie API")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 ROOT           = Path(__file__).parent
-OPENROUTER_KEY = os.environ.get("OPENROUTER_API_KEY", "")
-MODEL          = os.environ.get("MODEL", "meta-llama/llama-3.3-70b-instruct:free")
+GROQ_KEY = os.environ.get("GROQ_API_KEY", "")
+MODEL    = os.environ.get("MODEL", "llama-3.3-70b-versatile")
 
 SYSTEM_PROMPT = """You are Charlie, the friendly and knowledgeable AI assistant for the University of New Haven (UNH).
 You help students, faculty, staff, and visitors with ANY question about UNH.
@@ -371,9 +371,9 @@ async def chat(req: ChatRequest):
             async with httpx.AsyncClient(timeout=60) as client:
                 async with client.stream(
                     "POST",
-                    "https://openrouter.ai/api/v1/chat/completions",
+                    "https://api.groq.com/openai/v1/chat/completions",
                     headers={
-                        "Authorization": f"Bearer {OPENROUTER_KEY}",
+                        "Authorization": f"Bearer {GROQ_KEY}",
                         "Content-Type": "application/json",
                         "HTTP-Referer": "https://askcharlie.netlify.app",
                         "X-Title": "Ask Charlie UNH",
@@ -431,7 +431,7 @@ def health():
 @app.get("/debug")
 async def debug():
     """Test OpenRouter connection directly."""
-    if not OPENROUTER_KEY:
+    if not GROQ_KEY:
         return {"error": "OPENROUTER_API_KEY not set"}
     try:
         async with httpx.AsyncClient(timeout=30) as client:
