@@ -1,6 +1,6 @@
 """
 Ask Charlie — University of New Haven Chatbot Backend
-Stage 3: Smarter answers, live events/dining, better professor profiles, auto-update
+Stage 3: Using Groq API for fast, reliable, free AI responses
 """
 
 from fastapi import FastAPI, HTTPException
@@ -22,9 +22,10 @@ from datetime import datetime
 app = FastAPI(title="Ask Charlie API")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
-ROOT           = Path(__file__).parent
-GROQ_KEY = os.environ.get("GROQ_API_KEY", "")
-MODEL    = os.environ.get("MODEL", "llama-3.3-70b-versatile")
+ROOT      = Path(__file__).parent
+GROQ_KEY  = os.environ.get("GROQ_API_KEY", "")
+MODEL     = os.environ.get("MODEL", "llama-3.3-70b-versatile")
+GROQ_URL  = "https://api.groq.com/openai/v1/chat/completions"
 
 SYSTEM_PROMPT = """You are Charlie, the friendly and knowledgeable AI assistant for the University of New Haven (UNH).
 You help students, faculty, staff, and visitors with ANY question about UNH.
@@ -39,7 +40,7 @@ CRITICAL FORMATTING RULES:
 - For buildings include Google Maps link
 - If unsure: direct to newhaven.edu or (203) 932-7000
 - End responses about professors or programs with one helpful follow-up question
-- If you cannot find specific info, say so clearly and give the right contact — do NOT list random buildings
+- If you cannot find specific info, say so clearly and give the right contact
 
 Key contacts:
 - Main: (203) 932-7000 | UIS: 203-932-7371
@@ -57,16 +58,16 @@ PROFESSOR FORMAT — when you find a person in the directory:
 """
 
 # ── Data stores ───────────────────────────────────────────────────────────────
-_knowledge:        list = []
-_buildings:        list = []
-_professors:       list = []
-_events:           list = []
-_ready                  = False
-_crawl_done             = False
-_pages_crawled          = 0
-_last_prof_update       = None
+_knowledge:      list = []
+_buildings:      list = []
+_professors:     list = []
+_events:         list = []
+_ready                = False
+_crawl_done           = False
+_pages_crawled        = 0
+_last_prof_update     = None
 
-# ── UNH pages to fetch ────────────────────────────────────────────────────────
+# ── UNH pages ─────────────────────────────────────────────────────────────────
 UNH_PAGES = [
     ("academics",       "https://www.newhaven.edu/academics/index.php"),
     ("programs",        "https://www.newhaven.edu/academics/programs/index.php"),
@@ -157,9 +158,11 @@ def fetch_live_events():
                 })
         _events = events
         if events:
-            _knowledge.append({"text": "Upcoming UNH Events:\n" + "\n".join(
-                f"- {e['title']} | {e['date']} | {e['location']}" for e in events),
-                "type": "events", "url": "https://www.newhaven.edu/events/"})
+            _knowledge.append({
+                "text": "Upcoming UNH Events:\n" + "\n".join(
+                    f"- {e['title']} | {e['date']} | {e['location']}" for e in events),
+                "type": "events", "url": "https://www.newhaven.edu/events/"
+            })
         print(f"Fetched {len(_events)} events")
     except Exception as e:
         print(f"Events fetch failed: {e}")
@@ -325,9 +328,9 @@ async def startup():
     # Professors
     load_professors()
 
-    # Ready immediately — Railway healthcheck passes
+    # Ready immediately
     _ready = True
-    print(f"=== Ask Charlie READY | Model: {MODEL} ===")
+    print(f"=== Ask Charlie READY | Model: {MODEL} | Provider: Groq ===")
 
     # Background threads
     threading.Thread(target=background_fetch, daemon=True).start()
@@ -340,8 +343,8 @@ class ChatRequest(BaseModel):
 
 @app.post("/chat")
 async def chat(req: ChatRequest):
-    if not OPENROUTER_KEY:
-        raise HTTPException(500, "OPENROUTER_API_KEY not set")
+    if not GROQ_KEY:
+        raise HTTPException(500, "GROQ_API_KEY not set")
 
     question  = req.message.strip()
     prof_ctx  = professor_context(question)
@@ -371,24 +374,23 @@ async def chat(req: ChatRequest):
             async with httpx.AsyncClient(timeout=60) as client:
                 async with client.stream(
                     "POST",
-                    "https://api.groq.com/openai/v1/chat/completions",
+                    GROQ_URL,
                     headers={
                         "Authorization": f"Bearer {GROQ_KEY}",
-                        "Content-Type": "application/json",
-                        "HTTP-Referer": "https://askcharlie.netlify.app",
-                        "X-Title": "Ask Charlie UNH",
+                        "Content-Type":  "application/json",
                     },
                     json={
-                        "model":      MODEL,
-                        "messages":   messages,
-                        "max_tokens": 600,
-                        "stream":     True,
+                        "model":       MODEL,
+                        "messages":    messages,
+                        "max_tokens":  600,
+                        "stream":      True,
+                        "temperature": 0.7,
                     },
                 ) as resp:
                     if resp.status_code != 200:
                         error_body = await resp.aread()
-                        print(f"OpenRouter error {resp.status_code}: {error_body.decode()}")
-                        yield f"data: {json.dumps({'text': 'Sorry, AI service is temporarily unavailable. Please try again in a moment.'})}\n\n"
+                        print(f"Groq error {resp.status_code}: {error_body.decode()}")
+                        yield f"data: {json.dumps({'text': 'Sorry, AI service is temporarily unavailable. Please try again.'})}\n\n"
                     else:
                         async for line in resp.aiter_lines():
                             if not line.startswith("data: "):
@@ -401,9 +403,7 @@ async def chat(req: ChatRequest):
                                 t = chunk["choices"][0]["delta"].get("content","")
                                 if t:
                                     yield f"data: {json.dumps({'text':t})}\n\n"
-                            except json.JSONDecodeError:
-                                continue
-                            except (KeyError, IndexError):
+                            except (json.JSONDecodeError, KeyError, IndexError):
                                 continue
         except Exception as e:
             print(f"Chat error: {e}")
@@ -416,34 +416,36 @@ async def chat(req: ChatRequest):
 @app.get("/health")
 def health():
     return {
-        "status":             "ok",
-        "ready":              _ready,
-        "model":              MODEL,
-        "crawl_done":         _crawl_done,
-        "pages_crawled":      _pages_crawled,
-        "knowledge_chunks":   len(_knowledge),
-        "professors":         len(_professors),
-        "buildings":          len(_buildings),
-        "events":             len(_events),
-        "last_prof_update":   _last_prof_update,
+        "status":           "ok",
+        "ready":            _ready,
+        "model":            MODEL,
+        "provider":         "Groq",
+        "crawl_done":       _crawl_done,
+        "pages_crawled":    _pages_crawled,
+        "knowledge_chunks": len(_knowledge),
+        "professors":       len(_professors),
+        "buildings":        len(_buildings),
+        "events":           len(_events),
+        "last_prof_update": _last_prof_update,
     }
 
 @app.get("/debug")
 async def debug():
-    """Test OpenRouter connection directly."""
+    """Test Groq connection directly."""
     if not GROQ_KEY:
-        return {"error": "OPENROUTER_API_KEY not set"}
+        return {"error": "GROQ_API_KEY not set"}
     try:
         async with httpx.AsyncClient(timeout=30) as client:
             resp = await client.post(
-                "https://openrouter.ai/api/v1/chat/completions",
-                headers={"Authorization": f"Bearer {OPENROUTER_KEY}",
+                GROQ_URL,
+                headers={"Authorization": f"Bearer {GROQ_KEY}",
                          "Content-Type": "application/json"},
                 json={"model": MODEL,
                       "messages": [{"role":"user","content":"say hi in one word"}],
-                      "max_tokens": 20, "stream": False}
+                      "max_tokens": 10, "stream": False}
             )
-            return {"model": MODEL, "status": resp.status_code, "response": resp.json()}
+            return {"model": MODEL, "provider": "Groq",
+                    "status": resp.status_code, "response": resp.json()}
     except Exception as e:
         return {"error": str(e)}
 
@@ -468,4 +470,4 @@ def prof_refresh():
 @app.get("/")
 def root():
     return {"message": "Ask Charlie — UNH Assistant",
-            "ready": _ready, "model": MODEL}
+            "ready": _ready, "model": MODEL, "provider": "Groq"}
