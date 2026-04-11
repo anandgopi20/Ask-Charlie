@@ -430,7 +430,23 @@ async def chat(req: ChatRequest):
     return StreamingResponse(generate(), media_type="text/event-stream")
 
 # ── Endpoints ──────────────────────────────────────────────────────────────────
-@app.get("/health")
+@app.get("/debug")
+async def debug():
+    """Test the AI model directly"""
+    if not OPENROUTER_KEY:
+        return {"error": "No API key"}
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            resp = await client.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers={"Authorization": f"Bearer {OPENROUTER_KEY}",
+                         "Content-Type": "application/json"},
+                json={"model": MODEL, "messages": [{"role":"user","content":"say hi"}],
+                      "max_tokens": 50, "stream": False}
+            )
+            return {"model": MODEL, "status": resp.status_code, "response": resp.json()}
+    except Exception as e:
+        return {"error": str(e)}
 def health():
     return {
         "status": "ok",
