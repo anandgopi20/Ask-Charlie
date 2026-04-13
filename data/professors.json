@@ -288,13 +288,15 @@
     "name": "Adams, William",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Professor Emeritus",
-    "email": "wadams@newhaven.edu"
+    "email": "wadams@newhaven.edu",
+    "phone": "(203) 932-7166"
   },
   {
     "name": "Antonetti, Robert",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Adjunct Faculty",
-    "email": "rantonetti@newhaven.edu"
+    "email": "rantonetti@newhaven.edu",
+    "phone": "(203) 932-7165"
   },
   {
     "name": "Aurelien, Joubert",
@@ -869,19 +871,25 @@
     "name": "Balcilar, Mehmet",
     "department": "Economics and Business Analytics",
     "title": "Associate Professor",
-    "email": "mbalcilar@newhaven.edu"
+    "email": "mbalcilar@newhaven.edu",
+    "phone": "(203) 479-4779",
+    "office": "Maxcy Hall 119"
   },
   {
     "name": "Belitzky, Ellen",
     "department": "Economics and Business Analytics",
     "title": "Assistant Professor of Practice, Coordinator of BS Business Analytics",
-    "email": "ebelitzky@newhaven.edu"
+    "email": "ebelitzky@newhaven.edu",
+    "phone": "(203) 932-7124",
+    "office": "Maxcy Hall 120D"
   },
   {
     "name": "Brandao, Michelle",
     "department": "Economics and Business Analytics",
     "title": "Adjunct Faculty",
-    "email": "mbrandao@newhaven.edu"
+    "email": "mbrandao@newhaven.edu",
+    "phone": "(203) 479-4718",
+    "office": "Maxcy Hall 119"
   },
   {
     "name": "Barone, Charles",
@@ -898,26 +906,33 @@
   {
     "name": "Behzadan, Vahid",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
-    "title": "Associate Professor",
-    "email": "vbehzadan@newhaven.edu"
+    "title": "Associate Professor; Coordinator M.S. Artificial Intelligence",
+    "email": "VBehzadan@newhaven.edu",
+    "office": "Maxcy Hall 120A",
+    "phone": "(203) 479-4723"
   },
   {
     "name": "Berardesca, Gail",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Administrative Secretary I",
-    "email": "gberardesca@newhaven.edu"
+    "email": "gberardesca@newhaven.edu",
+    "phone": "(203) 932-7165",
+    "office": "Maxcy Hall 216"
   },
   {
     "name": "Bhuiyan, Md Moinuddin",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Associate Professor of Practice",
-    "email": "mbhuiyan@newhaven.edu"
+    "email": "mbhuiyan@newhaven.edu",
+    "phone": "(203) 479-4718",
+    "office": "Maxcy Hall 120D"
   },
   {
     "name": "Bickel, John",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Adjunct Faculty",
-    "email": "jbickel@newhaven.edu"
+    "email": "jbickel@newhaven.edu",
+    "phone": "(203) 932-7164"
   },
   {
     "name": "Bouajjaj, Jamal",
@@ -1947,7 +1962,9 @@
     "name": "Chandra, Barun",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Associate Professor",
-    "email": "bchandra@newhaven.edu"
+    "email": "bchandra@newhaven.edu",
+    "phone": "(203) 932-7089",
+    "office": "Maxcy Hall 119"
   },
   {
     "name": "Clark, Milton",
@@ -2856,14 +2873,18 @@
   {
     "name": "Duman, Gazi",
     "department": "Economics and Business Analytics",
-    "title": "Chair, Assistant Professor",
-    "email": "gduman@newhaven.edu"
+    "title": "Assistant Professor; Chair Department of Economics and Business Analytics; Coordinator M.S. Business Analytics",
+    "email": "GDuman@newhaven.edu",
+    "office": "Maxcy Hall, Office 102-E",
+    "phone": "(203) 479-4564"
   },
   {
     "name": "Donyina, Adwoa",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Assistant Professor of Practice",
-    "email": "adonyina@newhaven.edu"
+    "email": "adonyina@newhaven.edu",
+    "phone": "(203) 479-4720",
+    "office": "Echlin Hall 115A"
   },
   {
     "name": "Davis, Michael",
@@ -3330,25 +3351,32 @@
     "name": "Eggert, David",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Emeritus Faculty",
-    "email": "deggert@newhaven.edu"
+    "email": "deggert@newhaven.edu",
+    "phone": "(203) 932-7165",
+    "office": "Maxcy Hall 120"
   },
   {
     "name": "Elmazi, Altrin",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Adjunct Faculty",
-    "email": "aelmazi@newhaven.edu"
+    "email": "aelmazi@newhaven.edu",
+    "office": "Maxcy Hall 120D"
   },
   {
     "name": "Elmi, Saida",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Assistant Professor",
-    "email": "selmi@newhaven.edu"
+    "email": "selmi@newhaven.edu",
+    "phone": "(203) 479-4870",
+    "office": "Maxcy Hall 102B"
   },
   {
     "name": "Esmailpour, Amir",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Professor",
-    "email": "aesmailpour@newhaven.edu"
+    "email": "aesmailpour@newhaven.edu",
+    "phone": "(203) 479-4258",
+    "office": "Maxcy Hall 308"
   },
   {
     "name": "El Khalfi, Hamid",
@@ -3648,13 +3676,15 @@
     "name": "Fischer, Alice",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Professor",
-    "email": "afischer@newhaven.edu"
+    "email": "afischer@newhaven.edu",
+    "phone": "(203) 932-7069"
   },
   {
     "name": "Fish, Andrew",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Professor",
-    "email": "afish@newhaven.edu"
+    "email": "afish@newhaven.edu",
+    "phone": "(203) 932-7163"
   },
   {
     "name": "Frey, Roger",
@@ -4348,25 +4378,33 @@
     "name": "Ghosh, Tirthankar",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Professor, Elder Family Chair, Director of Connecticut Institute of Technology",
-    "email": "tghosh@newhaven.edu"
+    "email": "tghosh@newhaven.edu",
+    "phone": "(203) 479-4785",
+    "office": "Maxcy Hall 216"
   },
   {
     "name": "Golbazi, Ali",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Chair, Professor",
-    "email": "agolbazi@newhaven.edu"
+    "email": "agolbazi@newhaven.edu",
+    "phone": "(203) 932-7162",
+    "office": "Maxcy Hall 120E"
   },
   {
     "name": "Golden, Monique",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Project and Laboratory Manager",
-    "email": "mgolden@newhaven.edu"
+    "email": "mgolden@newhaven.edu",
+    "phone": "(203) 932-7165",
+    "office": "Maxcy Hall 216"
   },
   {
     "name": "Gunestas, Murat",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Assistant Professor",
-    "email": "mgunestas@newhaven.edu"
+    "email": "mgunestas@newhaven.edu",
+    "phone": "(203) 479-4785",
+    "office": "Maxcy Hall 120C"
   },
   {
     "name": "Goldberg, Joseph",
@@ -5049,7 +5087,9 @@
     "name": "Hussein, Sayed",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Associate Professor of Practice",
-    "email": "shussein@newhaven.edu"
+    "email": "shussein@newhaven.edu",
+    "phone": "(203) 479-4871",
+    "office": "Maxcy Hall 120D"
   },
   {
     "name": "Horton, Randall",
@@ -5574,13 +5614,17 @@
     "name": "Ikwunne, Tochukwu",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Assistant Professor",
-    "email": "tikwunne@newhaven.edu"
+    "email": "tikwunne@newhaven.edu",
+    "phone": "(203) 479-4871",
+    "office": "Maxcy Hall 120A"
   },
   {
     "name": "Islam, Muhammad Aminul",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Assistant Professor",
-    "email": "mislam@newhaven.edu"
+    "email": "mislam@newhaven.edu",
+    "phone": "(203) 479-4876",
+    "office": "Maxcy Hall 120A"
   },
   {
     "name": "Isbell, Mary",
@@ -6123,8 +6167,10 @@
   {
     "name": "Khare, Shivanjali",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
-    "title": "Assistant Professor",
-    "email": "skhare@newhaven.edu"
+    "title": "Assistant Professor, Computer Science; SARI Security and AI Lab",
+    "email": "SKhare@newhaven.edu",
+    "office": "Maxcy Hall 120B",
+    "phone": "(203) 479-4872"
   },
   {
     "name": "Kirschner, Wes",
@@ -6712,7 +6758,9 @@
     "name": "Levine, Phil",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Assistant Professor of Practice",
-    "email": "plevine@newhaven.edu"
+    "email": "plevine@newhaven.edu",
+    "phone": "(203) 479-4872",
+    "office": "Maxcy Hall, Room 116A"
   },
   {
     "name": "Lpizra, Aymen",
@@ -7640,8 +7688,10 @@
   {
     "name": "Marks, Brian",
     "department": "Economics and Business Analytics",
-    "title": "Associate Professor of Practice, Executive Director, Entrepreneurship and Innovation Program",
-    "email": "bmarks@newhaven.edu"
+    "title": "Associate Professor of Practice; Executive Director Entrepreneurship and Innovation Program",
+    "email": "BMarks@newhaven.edu",
+    "office": "Maxcy Hall 118B-5",
+    "phone": "(203) 479-4150"
   },
   {
     "name": "Meloy, Richard",
@@ -7659,7 +7709,9 @@
     "name": "Mahalal, Elmahedi",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Assistant Professor",
-    "email": "emahalal@newhaven.edu"
+    "email": "emahalal@newhaven.edu",
+    "phone": "(203) 479-4755",
+    "office": "Echlin Hall 116"
   },
   {
     "name": "Markowitz, Ted",
@@ -7670,14 +7722,18 @@
   {
     "name": "Martinez, Christopher",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
-    "title": "Associate Professor",
-    "email": "cmartinez@newhaven.edu"
+    "title": "Associate Professor, Computer Engineering; Coordinator B.S. Electrical & Computer Engineering",
+    "email": "CMartinez@newhaven.edu",
+    "office": "Maxcy Hall 310",
+    "phone": "(203) 931-2924"
   },
   {
     "name": "Mazumder, Ratul",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Adjunct Faculty",
-    "email": "rmazumder@newhaven.edu"
+    "email": "rmazumder@newhaven.edu",
+    "phone": "(203) 479-4945",
+    "office": "Maxcy Hall 120D"
   },
   {
     "name": "Meffert, Christopher",
@@ -7688,26 +7744,34 @@
   {
     "name": "Mekni, Mehdi",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
-    "title": "Professor",
-    "email": "mmekni@newhaven.edu"
+    "title": "Professor, Computer Science and Cybersecurity; Coordinator B.S. Cybersecurity",
+    "email": "MMekni@newhaven.edu",
+    "office": "Echlin Hall 212A",
+    "phone": "(203) 479-4874"
   },
   {
     "name": "Meliksetian, Dikran",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Adjunct Faculty",
-    "email": "dmeliksetian@newhaven.edu"
+    "email": "dmeliksetian@newhaven.edu",
+    "phone": "(203) 479-4945",
+    "office": "Maxcy Hall 120D"
   },
   {
     "name": "Millburn, Travis",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Adjunct Faculty",
-    "email": "tmillburn@newhaven.edu"
+    "email": "tmillburn@newhaven.edu",
+    "phone": "(203) 479-4945",
+    "office": "Maxcy Hall 120D"
   },
   {
     "name": "Mohammadi, Fazel",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Assistant Professor",
-    "email": "fmohammadi@newhaven.edu"
+    "email": "fmohammadi@newhaven.edu",
+    "phone": "(203) 479-4758",
+    "office": "Maxcy Hall 308"
   },
   {
     "name": "Moore-Costa, Joseph",
@@ -7719,13 +7783,17 @@
     "name": "Morton, Mark",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Lab Supervisor",
-    "email": "mmorton@newhaven.edu"
+    "email": "mmorton@newhaven.edu",
+    "phone": "(203) 932-7166",
+    "office": "Buckman Hall 241"
   },
   {
     "name": "Mukhopadhyay, Shayok",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Associate Professor",
-    "email": "smukhopadhyay@newhaven.edu"
+    "email": "smukhopadhyay@newhaven.edu",
+    "phone": "(203) 479-4784",
+    "office": "Maxcy Hall 116C"
   },
   {
     "name": "Mutraji, Bilal",
@@ -7952,8 +8020,10 @@
   {
     "name": "Marks, Joel",
     "department": "Human Sciences - Philosophy",
-    "title": "Professor Emeritus",
-    "email": "jmarks@newhaven.edu"
+    "title": "Associate Professor of Practice; Executive Director Entrepreneurship and Innovation Program",
+    "email": "BMarks@newhaven.edu",
+    "office": "Maxcy Hall 118B-5",
+    "phone": "(203) 479-4150"
   },
   {
     "name": "Mixie, Joseph",
@@ -8263,8 +8333,10 @@
   {
     "name": "Martinez, Tiffany",
     "department": "Provost's Office",
-    "title": "Administrative Specialist",
-    "email": "tmartinez@newhaven.edu"
+    "title": "Associate Professor, Computer Engineering; Coordinator B.S. Electrical & Computer Engineering",
+    "email": "CMartinez@newhaven.edu",
+    "office": "Maxcy Hall 310",
+    "phone": "(203) 931-2924"
   },
   {
     "name": "Morano, Justin",
@@ -8419,14 +8491,18 @@
   {
     "name": "Marks, Jacqueline",
     "department": "Tow Youth Justice Institute",
-    "title": "Project Coordinator - TCBHPPC",
-    "email": "jmarks@newhaven.edu"
+    "title": "Associate Professor of Practice; Executive Director Entrepreneurship and Innovation Program",
+    "email": "BMarks@newhaven.edu",
+    "office": "Maxcy Hall 118B-5",
+    "phone": "(203) 479-4150"
   },
   {
     "name": "Mendieta-Martinez, Izarelli",
     "department": "Tow Youth Justice Institute",
-    "title": "Communications Project Coordinator",
-    "email": "imendietamartinez@newhaven.edu"
+    "title": "Associate Professor, Computer Engineering; Coordinator B.S. Electrical & Computer Engineering",
+    "email": "CMartinez@newhaven.edu",
+    "office": "Maxcy Hall 310",
+    "phone": "(203) 931-2924"
   },
   {
     "name": "Malloy, Thomas",
@@ -8641,8 +8717,10 @@
   {
     "name": "Navarro Martinez, Carlos",
     "department": "Economics and Business Analytics",
-    "title": "Adjunct Faculty",
-    "email": "cnavarromartinez@newhaven.edu"
+    "title": "Associate Professor, Computer Engineering; Coordinator B.S. Electrical & Computer Engineering",
+    "email": "CMartinez@newhaven.edu",
+    "office": "Maxcy Hall 310",
+    "phone": "(203) 931-2924"
   },
   {
     "name": "Nahar, Bhavik",
@@ -8653,8 +8731,10 @@
   {
     "name": "Nassar, Mohamad",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
-    "title": "Assistant Professor",
-    "email": "mnassar@newhaven.edu"
+    "title": "Assistant Professor, Computer Science",
+    "email": "MNassar@newhaven.edu",
+    "office": "Echlin Hall 203",
+    "phone": "(203) 932-7333"
   },
   {
     "name": "Nurmatova, Gulnora",
@@ -8940,8 +9020,10 @@
   {
     "name": "Ozkul, Ahmet",
     "department": "Economics and Business Analytics",
-    "title": "Associate Professor",
-    "email": "aozkul@newhaven.edu"
+    "title": "Associate Professor, Department of Economics and Business Analytics",
+    "email": "AOzkul@newhaven.edu",
+    "office": "Orange Campus N125A",
+    "phone": "(203) 479-4862"
   },
   {
     "name": "Ogunwobi, Emmanuel",
@@ -9083,8 +9165,10 @@
   {
     "name": "Page, James",
     "department": "Accounting, Finance and Marketing",
-    "title": "Adjunct Faculty",
-    "email": "jpage@newhaven.edu"
+    "title": "Associate Professor of Practice, Computer Science",
+    "email": "LPage@newhaven.edu",
+    "office": "Echlin Hall 115B",
+    "phone": "(203) 932-1037"
   },
   {
     "name": "Poppa, Cynthia",
@@ -9461,8 +9545,10 @@
   {
     "name": "Page, Liberty",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
-    "title": "Associate Professor of Practice",
-    "email": "lpage@newhaven.edu"
+    "title": "Associate Professor of Practice, Computer Science",
+    "email": "LPage@newhaven.edu",
+    "office": "Echlin Hall 115B",
+    "phone": "(203) 932-1037"
   },
   {
     "name": "Piazza, Nancirose",
@@ -9474,25 +9560,32 @@
     "name": "Pillar, George",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Adjunct Faculty",
-    "email": "gpillar@newhaven.edu"
+    "email": "gpillar@newhaven.edu",
+    "phone": "(203) 479-4756"
   },
   {
     "name": "Pithadia, Div",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
-    "title": "Assistant Professor of Practice",
-    "email": "dpithadia@newhaven.edu"
+    "title": "Assistant Professor of Practice; Coordinator M.S. Data Science; Coordinator B.S. Artificial Intelligence",
+    "email": "DPithadia@newhaven.edu",
+    "office": "Maxcy Hall, Room 327",
+    "phone": "(203) 479-4875"
   },
   {
     "name": "Page, Richard",
     "department": "Engineering and Applied Science",
-    "title": "Adjunct Faculty",
-    "email": "rpage@newhaven.edu"
+    "title": "Associate Professor of Practice, Computer Science",
+    "email": "LPage@newhaven.edu",
+    "office": "Echlin Hall 115B",
+    "phone": "(203) 932-1037"
   },
   {
     "name": "Pellicano, Francis",
     "department": "Engineering and Applied Science",
     "title": "Adjunct Faculty",
-    "email": "fpellicano@newhaven.edu"
+    "email": "fpellicano@newhaven.edu",
+    "phone": "(203) 479-4945",
+    "office": "Maxcy Hall 120D"
   },
   {
     "name": "Paramita, Padya",
@@ -9599,8 +9692,10 @@
   {
     "name": "Page, Catherine",
     "department": "Human Sciences - History",
-    "title": "Adjunct Faculty",
-    "email": "cpage@newhaven.edu"
+    "title": "Associate Professor of Practice, Computer Science",
+    "email": "LPage@newhaven.edu",
+    "office": "Echlin Hall 115B",
+    "phone": "(203) 932-1037"
   },
   {
     "name": "Pruslow, Darren",
@@ -10127,8 +10222,10 @@
   {
     "name": "Rossi, Michael",
     "department": "Biology and Environmental Science",
-    "title": "Emeritus Faculty",
-    "email": "mrossi@newhaven.edu"
+    "title": "Associate Professor of Practice; Coordinator B.S. Computer Science",
+    "email": "TRossi@newhaven.edu",
+    "office": "Maxcy Hall 120B",
+    "phone": "(203) 479-4728"
   },
   {
     "name": "Roy, John",
@@ -10314,13 +10411,16 @@
     "name": "Rismay, Lily",
     "department": "Economics and Business Analytics",
     "title": "Adjunct Faculty",
-    "email": "lrismay@newhaven.edu"
+    "email": "lrismay@newhaven.edu",
+    "phone": "(203) 932-7162",
+    "office": "Maxcy Hall 120B"
   },
   {
     "name": "Rodriguez, Armando",
     "department": "Economics and Business Analytics",
     "title": "Professor",
-    "email": "arodriguez@newhaven.edu"
+    "email": "arodriguez@newhaven.edu",
+    "phone": "(203) 932-7372"
   },
   {
     "name": "Rosen, John",
@@ -10338,13 +10438,15 @@
     "name": "Rivera, Luis",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Adjunct Faculty",
-    "email": "lrivera@newhaven.edu"
+    "email": "lrivera@newhaven.edu",
+    "phone": "(203) 479-4756"
   },
   {
     "name": "Rodrigues, Armindo",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Adjunct Faculty",
-    "email": "arodrigues@newhaven.edu"
+    "email": "arodrigues@newhaven.edu",
+    "phone": "(203) 479-4756"
   },
   {
     "name": "Rodriguez, Frederick",
@@ -10355,14 +10457,18 @@
   {
     "name": "Rossi, Thomas",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
-    "title": "Associate Professor of Practice",
-    "email": "trossi@newhaven.edu"
+    "title": "Associate Professor of Practice; Coordinator B.S. Computer Science",
+    "email": "TRossi@newhaven.edu",
+    "office": "Maxcy Hall 120B",
+    "phone": "(203) 479-4728"
   },
   {
     "name": "Rusu, Adrian",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
-    "title": "Professor, Coordinator of MS Cybersecurity Program",
-    "email": "arusu@newhaven.edu"
+    "title": "Professor; Coordinator M.S. Computer Science",
+    "email": "ARusu@newhaven.edu",
+    "office": "Maxcy Hall 120G",
+    "phone": "(203) 932-7165"
   },
   {
     "name": "Randi, Judy",
@@ -11471,13 +11577,17 @@
     "name": "Sarraf, Mohsen",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Associate Professor of Practice",
-    "email": "msarraf@newhaven.edu"
+    "email": "msarraf@newhaven.edu",
+    "phone": "(203) 932-1261",
+    "office": "Maxcy Hall 119"
   },
   {
     "name": "Sayed, Khaled",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Assistant Professor",
-    "email": "ksayed@newhaven.edu"
+    "email": "ksayed@newhaven.edu",
+    "phone": "(203) 479-4783",
+    "office": "Maxcy Hall 102C"
   },
   {
     "name": "Schmicker, Robert",
@@ -11495,7 +11605,9 @@
     "name": "Shokite, Thomas",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Adjunct Faculty",
-    "email": "tshokite@newhaven.edu"
+    "email": "tshokite@newhaven.edu",
+    "phone": "(203) 932-7125",
+    "office": "Maxcy Hall 120A"
   },
   {
     "name": "Stanford, Gregory",
@@ -11507,13 +11619,17 @@
     "name": "Sukhavasi, Suparshya",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Assistant Professor of Practice",
-    "email": "ssukhavasi@newhaven.edu"
+    "email": "ssukhavasi@newhaven.edu",
+    "phone": "(203) 932-7164",
+    "office": "Maxcy Hall 120D"
   },
   {
     "name": "Sula, Ardiana",
     "department": "Electrical & Computer Engineering and Computer Science (ECECS)",
     "title": "Associate Professor of Practice",
-    "email": "asula@newhaven.edu"
+    "email": "asula@newhaven.edu",
+    "phone": "(203) 932-7164",
+    "office": "Maxcy Hall 120A"
   },
   {
     "name": "Sloane, David",
