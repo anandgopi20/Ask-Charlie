@@ -1,70 +1,99 @@
 """
-Ask Charlie — University of New Haven Chatbot Backend
-Using Google AI (Gemini 2.0 Flash) — same quality as before, completely free
+Ask Charlie — University of New Haven AI Chatbot
+Production-ready | OpenRouter (Gemini 2.5 Flash Lite) | Credit-efficient
 """
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-import httpx
-import requests
-import re
-import os
-import json
-import csv
-import threading
-import time as time_module
+import httpx, requests, re, os, json, csv, threading, time as time_module
 from bs4 import BeautifulSoup
 from pathlib import Path
 from datetime import datetime
 
-app = FastAPI(title="Ask Charlie API")
+app = FastAPI(title="Ask Charlie — UNH AI Assistant")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
-ROOT          = Path(__file__).parent
-GOOGLE_KEY    = os.environ.get("GOOGLE_API_KEY", "")
-MODEL         = os.environ.get("MODEL", "gemini-2.0-flash")
-GOOGLE_URL    = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:streamGenerateContent?alt=sse&key={GOOGLE_KEY}"
+ROOT           = Path(__file__).parent
+OPENROUTER_KEY = os.environ.get("OPENROUTER_API_KEY", "")
+MODEL          = os.environ.get("MODEL", "openrouter/auto")
+OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
-SYSTEM_PROMPT = """You are Charlie, the friendly and knowledgeable AI assistant for the University of New Haven (UNH).
-You help students, faculty, staff, and visitors with ANY question about UNH.
+# ── System prompt ─────────────────────────────────────────────────────────────
+SYSTEM_PROMPT = """You are Charlie, the official AI assistant for the University of New Haven (UNH).
+You help students, faculty, staff, and visitors 24/7 with accurate, friendly answers.
 
-CRITICAL FORMATTING RULES:
-- NEVER use citation numbers like [1], [2], [3] anywhere
-- URLs must be clean with NO brackets or numbers after them
-- Use bullet points for lists
-- Keep answers under 250 words unless truly needed
+RESPONSE RULES:
+- NEVER use citation numbers [1][2][3] anywhere — not in text, not next to URLs
+- Keep URLs clean — no brackets or numbers after them
+- Use bullet points and bold for lists
+- Keep answers under 300 words
 - Be warm, friendly, and helpful
-- Use provided context only — never make up facts
-- For buildings include Google Maps link
-- If unsure: direct to newhaven.edu or (203) 932-7000
-- End responses about professors or programs with one helpful follow-up question
-- If you cannot find specific info, say so clearly and give the right contact
+- Only use provided context — never invent facts
+- Always include Google Maps link for buildings
+- End professor/program responses with one helpful follow-up question
+- If unsure: say so clearly and give the right contact info
 
-Key contacts:
-- Main: (203) 932-7000 | UIS: 203-932-7371
-- CDC: 203-479-4858 | careerdevelopmentcenter@newhaven.edu
-- Admissions: admissions@newhaven.edu | Health: (203) 932-7079
+KEY UNH CONTACTS:
+- Main office: (203) 932-7000 | newhaven.edu
+- IT/UIS Help: (203) 932-7371 | uis@newhaven.edu
+- Career Development (CDC): (203) 479-4858 | careerdevelopmentcenter@newhaven.edu
+- Admissions: admissions@newhaven.edu | (203) 932-7319
+- Financial Aid: finaid@newhaven.edu | (203) 932-7315
+- Health Center: (203) 932-7079
+- Registrar: registrar@newhaven.edu
+- Campus Police: (203) 932-7014 (emergency: 911)
+- Library: (203) 932-7170
+- Housing: (203) 932-7042
 
-PROFESSOR FORMAT — when you find a person in the directory:
+PROFESSOR CARD FORMAT (always use this when showing a person):
 👤 **[Full Name]**
 🏫 **Department:** [Department]
 📌 **Title:** [Title]
 📞 **Phone:** [Phone or "Not listed"]
-🏢 **Office:** [Building + Room or "Not listed"]
-📧 **Email:** [email or "Not listed"]
-🔗 **Profile:** https://www.newhaven.edu/directory/index.php
+🏢 **Office:** [Office or "Not listed"]
+📧 **Email:** [email]
+🔗 **Directory:** https://www.newhaven.edu/directory/index.php
 
-UNH DINING OPTIONS:
-- Bartels & Stoud Dining Hall (The Marketplace): Mon-Fri 7am-8pm, Sat-Sun 10am-7pm, Bartels Campus Center, 11 stations including breakfast/deli/pizza/grill/vegan
-- Jazzman's Cafe and Bakery: Mon-Fri 7am-6pm, Bartels Campus Center, coffee/pastries/sandwiches
-- Food on Demand (FoD): Varies seasonally, Westside Hall, fixed menu/unlimited salad/dessert
-- Moe's Southwest Grill: Varies, Bergami Hall, burritos/tacos/quesadillas
-- ReCharge Convenience Market (C Store): 8am-2:30pm, Sheffield Hall, snacks/groceries/dining dollars
-- Smooth Haven: 8am-5:30pm, smoothies and healthy options
-- Wow (Wings Over West Haven): Varies, Bergami Hall, wings/burgers/quesadillas/salads
-- More info: https://newhaven.sodexomyway.com
+UNH DINING (always available — use this when asked about food):
+🍽️ **Bartels & Stoud Dining Hall (The Marketplace)**
+• Hours: Mon-Fri 7am-8pm | Sat-Sun 10am-7pm
+• Location: Bartels Campus Center
+• 11 stations: breakfast, deli, pizza/pasta, grill, vegan & allergy-free options
+
+🍽️ **Jazzman's Cafe and Bakery**
+• Hours: Mon-Fri 7am-6pm | Location: Bartels Campus Center
+• Coffee, pastries, sandwiches
+
+🍽️ **Food on Demand (FoD)**
+• Hours: Vary seasonally | Location: Westside Hall
+• Fixed menu, unlimited salad/dessert/beverages
+
+🍽️ **Moe's Southwest Grill**
+• Hours: Vary | Location: Bergami Hall
+• Burritos, tacos, quesadillas
+
+🍽️ **ReCharge Convenience Market (C Store)**
+• Hours: 8am-2:30pm | Location: Sheffield Hall
+• Snacks, groceries, dining dollars accepted
+
+🍽️ **Smooth Haven**
+• Hours: 8am-5:30pm | Smoothies and healthy options
+
+🍽️ **Wow (Wings Over West Haven)**
+• Hours: Vary | Location: Bergami Hall
+• Wings, burgers, quesadillas, salads
+
+For real-time menus and hours: https://newhaven.sodexomyway.com
+
+UNH IT SUPPORT (always available):
+- Canvas LMS: canvas.newhaven.edu
+- MFA Setup: studentsupport.newhaven.edu/mfa/
+- WiFi: Connect to "UNH-Secure" with your UNH credentials
+- Password reset: studentsupport.newhaven.edu/login-trouble/
+- Printing: studentsupport.newhaven.edu/printing-on-campus/
+- IT Help Desk: (203) 932-7371 | uis@newhaven.edu
 """
 
 # ── Data stores ───────────────────────────────────────────────────────────────
@@ -88,7 +117,6 @@ UNH_PAGES = [
     ("international",   "https://www.newhaven.edu/admissions/international/index.php"),
     ("student-life",    "https://www.newhaven.edu/student-life/index.php"),
     ("housing",         "https://www.newhaven.edu/student-life/living-on-campus/index.php"),
-    ("dining",          "https://www.newhaven.edu/dining"),
     ("health",          "https://www.newhaven.edu/student-life/health-wellness/index.php"),
     ("safety",          "https://www.newhaven.edu/student-life/public-safety/index.php"),
     ("cdc",             "https://www.newhaven.edu/student-life/career-development-center/index.php"),
@@ -103,7 +131,6 @@ UNH_PAGES = [
     ("lee-college",     "https://www.newhaven.edu/lee-college/index.php"),
     ("health-sciences", "https://www.newhaven.edu/health-sciences/index.php"),
     ("research",        "https://www.newhaven.edu/research/index.php"),
-    ("inclusion",       "https://www.newhaven.edu/inclusion/index.php"),
     ("veterans",        "https://www.newhaven.edu/veterans/index.php"),
     ("orientation",     "https://www.newhaven.edu/student-life/orientation/index.php"),
     ("commencement",    "https://www.newhaven.edu/commencement/index.php"),
@@ -113,6 +140,13 @@ UNH_PAGES = [
     ("uis-wifi",        "https://studentsupport.newhaven.edu/network-connectivity/"),
     ("uis-printing",    "https://studentsupport.newhaven.edu/printing-on-campus/"),
     ("uis-login",       "https://studentsupport.newhaven.edu/login-trouble/"),
+    ("ececs-faculty",   "https://www.newhaven.edu/engineering/academic-departments/electrical-computer-engineering-computer-science-faculty.php"),
+    ("ds-faculty",      "https://www.newhaven.edu/engineering/graduate-programs/data-science/faculty.php"),
+    ("ai-faculty",      "https://www.newhaven.edu/engineering/graduate-programs/artificial-intelligence/faculty.php"),
+    ("cs-faculty",      "https://www.newhaven.edu/engineering/undergraduate-programs/computer-science/faculty.php"),
+    ("business-faculty","https://www.newhaven.edu/business/graduate-programs/information-science/faculty.php"),
+    ("ds-program",      "https://www.newhaven.edu/engineering/graduate-programs/data-science/index.php"),
+    ("ai-program",      "https://www.newhaven.edu/engineering/graduate-programs/artificial-intelligence/index.php"),
 ]
 
 # ── HTML helpers ──────────────────────────────────────────────────────────────
@@ -123,16 +157,16 @@ def clean_html(html: str) -> str:
         tag.decompose()
     return re.sub(r"\n{3,}", "\n\n", soup.get_text("\n")).strip()
 
-def chunk_text(text: str, max_chars: int = 1000) -> list:
+def chunk_text(text: str, max_chars: int = 800) -> list:
     chunks, i = [], 0
     while i < len(text):
         end = min(len(text), i + max_chars)
         chunk = text[i:end].strip()
-        if len(chunk) > 100:
+        if len(chunk) > 80:
             chunks.append(chunk)
         if end == len(text):
             break
-        i = max(0, end - 100)
+        i = max(0, end - 80)
     return chunks
 
 def fetch_page(label: str, url: str):
@@ -144,7 +178,7 @@ def fetch_page(label: str, url: str):
     except:
         pass
 
-# ── Live data ─────────────────────────────────────────────────────────────────
+# ── Live events ────────────────────────────────────────────────────────────────
 def fetch_live_events():
     global _events
     try:
@@ -152,19 +186,19 @@ def fetch_live_events():
                          timeout=10, headers={"User-Agent":"AskCharlieBot/3.0"})
         soup = BeautifulSoup(r.text, "lxml")
         events = []
-        for item in soup.select(".event-item, .event, article.event, .events-list li")[:10]:
-            title = item.select_one("h2, h3, h4, .event-title, .title")
-            date  = item.select_one(".date, .event-date, time")
-            loc   = item.select_one(".location, .venue, .event-location")
+        for item in soup.select(".event-item,.event,article.event,.events-list li")[:10]:
+            title = item.select_one("h2,h3,h4,.event-title,.title")
+            date  = item.select_one(".date,.event-date,time")
+            loc   = item.select_one(".location,.venue,.event-location")
             link  = item.select_one("a")
             if title:
                 events.append({
                     "title":    title.get_text(strip=True),
                     "date":     date.get_text(strip=True) if date else "See website",
                     "location": loc.get_text(strip=True) if loc else "UNH Campus",
-                    "url":      (("https://www.newhaven.edu" + link["href"])
+                    "url":      ("https://www.newhaven.edu" + link["href"]
                                  if link and link.get("href","").startswith("/")
-                                 else (link["href"] if link else "https://www.newhaven.edu/events/"))
+                                 else link["href"] if link else "https://www.newhaven.edu/events/")
                 })
         _events = events
         print(f"Fetched {len(_events)} events")
@@ -194,7 +228,7 @@ def weekly_professor_update():
         time_module.sleep(7 * 24 * 60 * 60)
         run_professor_scraper()
 
-# ── Background thread ─────────────────────────────────────────────────────────
+# ── Background fetch ──────────────────────────────────────────────────────────
 def background_fetch():
     global _crawl_done, _pages_crawled
     fetch_live_events()
@@ -202,11 +236,11 @@ def background_fetch():
         fetch_page(label, url)
         _pages_crawled += 1
     _crawl_done = True
-    print(f"Background fetch done: {_pages_crawled} pages, {len(_knowledge)} chunks")
+    print(f"Done: {_pages_crawled} pages, {len(_knowledge)} chunks")
 
-# ── Search ────────────────────────────────────────────────────────────────────
-def keyword_search(query: str, k: int = 6) -> list:
-    words = set(re.findall(r'\w+', query.lower()))
+# ── Smart keyword search ──────────────────────────────────────────────────────
+def keyword_search(query: str, k: int = 5) -> list:
+    words = set(re.findall(r'\w+', query.lower())) - {"what","how","does","the","is","are","a","an"}
     scored = [(len(words & set(re.findall(r'\w+', doc["text"].lower()))), doc["text"])
               for doc in _knowledge]
     scored = [(s, t) for s, t in scored if s > 0]
@@ -216,18 +250,17 @@ def keyword_search(query: str, k: int = 6) -> list:
 def find_buildings(query: str) -> list:
     q = query.lower()
     return [b for b in _buildings
-            if any(w in b["name"].lower() for w in q.split() if len(w) > 3)
-            or any(w in q for w in b["name"].lower().split() if len(w) > 3)][:3]
+            if any(w in b["name"].lower() for w in q.split() if len(w) > 3)][:2]
 
 # ── Professor search ──────────────────────────────────────────────────────────
 PERSON_RE = re.compile(
     r"\b(professor|prof|dr\.?|doctor|faculty|coordinator|director|"
     r"instructor|lecturer|advisor|chair|dean|who is|contact|email|"
-    r"phone|office|staff|teach|teaches)\b", re.IGNORECASE
+    r"phone|office|staff|teach|teaches|find)\b", re.IGNORECASE
 )
 STOPWORDS = {"who","is","the","a","an","for","of","in","at","me","tell","find",
              "get","what","are","does","do","his","her","their","this","that",
-             "can","you","i","my","how","about","give","show","need","want"}
+             "can","you","i","my","how","about","give","show","need","want","unh"}
 
 def _score(p: dict, terms: list) -> int:
     score = 0
@@ -258,14 +291,13 @@ def professor_context(msg: str) -> str:
     results = search_professors(msg)
     if not results:
         return ""
-    lines = ["[DIRECTORY RESULTS — format each as a card with emoji labels]"]
+    lines = ["[DIRECTORY RESULTS — show each as a formatted card]"]
     for p in results:
         lines.append(
             f"Name: {p.get('name','?')} | "
             f"Dept: {p.get('department','N/A')} | "
             f"Title: {p.get('title','N/A')} | "
             f"Phone: {p.get('phone','Not listed')} | "
-            f"Building: {p.get('building','')} | "
             f"Office: {p.get('office','Not listed')} | "
             f"Email: {p.get('email','Not listed')} | "
             f"Profile: https://www.newhaven.edu/directory/index.php"
@@ -273,7 +305,7 @@ def professor_context(msg: str) -> str:
     return "\n".join(lines)
 
 EVENTS_RE = re.compile(
-    r"\b(event|events|happening|schedule|calendar|activities|things to do)\b",
+    r"\b(event|events|happening|schedule|calendar|activities|things to do|this week)\b",
     re.IGNORECASE
 )
 
@@ -282,17 +314,42 @@ def events_context(msg: str) -> str:
         return ""
     lines = ["[UPCOMING UNH EVENTS]"]
     for e in _events[:5]:
-        lines.append(f"Event: {e['title']} | Date: {e['date']} | "
-                     f"Location: {e['location']} | URL: {e['url']}")
+        lines.append(f"• {e['title']} | {e['date']} | {e['location']} | {e['url']}")
     return "\n".join(lines)
+
+# ── Build efficient context (saves credits) ───────────────────────────────────
+def build_context(question: str) -> str:
+    parts = []
+
+    # Professor search
+    prof = professor_context(question)
+    if prof:
+        parts.append(prof)
+
+    # Events
+    evt = events_context(question)
+    if evt:
+        parts.append(evt)
+
+    # Buildings
+    buildings = find_buildings(question)
+    if buildings:
+        blines = ["Campus buildings:"]
+        for b in buildings:
+            blines.append(f"- {b['name']} ({b['category']}): {b['notes']} → {b['maps']}")
+        parts.append("\n".join(blines))
+
+    # Knowledge base (limit to save credits)
+    hits = keyword_search(question, k=4)
+    if hits:
+        parts.append("Context:\n" + "\n---\n".join(hits[:3]))
+
+    return "\n\n".join(parts)
 
 # ── Startup ───────────────────────────────────────────────────────────────────
 @app.on_event("startup")
 async def startup():
-    global _ready, GOOGLE_URL
-
-    # Update URL with actual key
-    GOOGLE_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:streamGenerateContent?alt=sse&key={GOOGLE_KEY}"
+    global _ready
 
     # Buildings
     csv_path = ROOT / "data" / "buildings.csv"
@@ -320,11 +377,9 @@ async def startup():
     # Professors
     load_professors()
 
-    # Ready immediately
     _ready = True
-    print(f"=== Ask Charlie READY | Model: {MODEL} | Provider: Google AI ===")
+    print(f"=== Ask Charlie READY | {MODEL} via OpenRouter ===")
 
-    # Background threads
     threading.Thread(target=background_fetch, daemon=True).start()
     threading.Thread(target=weekly_professor_update, daemon=True).start()
 
@@ -335,76 +390,54 @@ class ChatRequest(BaseModel):
 
 @app.post("/chat")
 async def chat(req: ChatRequest):
-    if not GOOGLE_KEY:
-        raise HTTPException(500, "GOOGLE_API_KEY not set")
+    question = req.message.strip()
+    ctx      = build_context(question)
 
-    question  = req.message.strip()
-    prof_ctx  = professor_context(question)
-    evt_ctx   = events_context(question)
-    buildings = find_buildings(question)
-
-    bctx = ""
-    if buildings:
-        bctx = "Campus buildings:\n" + "\n".join(
-            f"- {b['name']} ({b['category']}): {b['notes']} → {b['maps']}"
-            for b in buildings) + "\n\n"
-
-    hits = keyword_search(question, k=6)
-    rctx = ("Context:\n" + "\n---\n".join(hits[:5])) if hits else ""
-    ctx  = "\n\n".join(filter(None, [prof_ctx, evt_ctx, bctx, rctx]))
-
-    user_content = f"{ctx}\n\nQuestion: {question}" if ctx else question
-
-    # Google AI uses different message format
-    payload = {
-        "system_instruction": {"parts": [{"text": SYSTEM_PROMPT}]},
-        "contents": [],
-        "generationConfig": {
-            "maxOutputTokens": 600,
-            "temperature": 0.7,
-        }
-    }
-
-    # Add history
-    for h in req.history[-6:]:
-        payload["contents"].append({
-            "role": "user" if h["role"] == "user" else "model",
-            "parts": [{"text": h["content"]}]
-        })
-
-    # Add current message
-    payload["contents"].append({
-        "role": "user",
-        "parts": [{"text": user_content}]
+    messages = [{"role":"system","content":SYSTEM_PROMPT}]
+    for h in req.history[-4:]:  # limit history to save credits
+        messages.append({"role":h["role"],"content":h["content"]})
+    messages.append({
+        "role":    "user",
+        "content": f"{ctx}\n\nQuestion: {question}" if ctx else question
     })
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:streamGenerateContent?alt=sse&key={GOOGLE_KEY}"
-
     async def generate():
+        if not OPENROUTER_KEY:
+            yield f"data: {json.dumps({'text': 'API key not configured. Please contact support.'})}\n\n"
+            yield "data: [DONE]\n\n"
+            return
         try:
             async with httpx.AsyncClient(timeout=60) as client:
-                async with client.stream("POST", url, json=payload) as resp:
+                async with client.stream(
+                    "POST", OPENROUTER_URL,
+                    headers={
+                        "Authorization": f"Bearer {OPENROUTER_KEY}",
+                        "Content-Type":  "application/json",
+                        "HTTP-Referer":  "https://askcharlie.netlify.app",
+                        "X-Title":       "Ask Charlie UNH",
+                    },
+                    json={
+                        "model":       MODEL,
+                        "messages":    messages,
+                        "max_tokens":  500,   # limit to save credits
+                        "stream":      True,
+                        "temperature": 0.7,
+                    },
+                ) as resp:
                     if resp.status_code != 200:
-                        error_body = await resp.aread()
-                        print(f"Google AI error {resp.status_code}: {error_body.decode()}")
-                        yield f"data: {json.dumps({'text': 'Sorry, AI service is temporarily unavailable. Please try again.'})}\n\n"
+                        body = await resp.aread()
+                        err  = json.loads(body).get("error",{}).get("message","Unknown error")
+                        print(f"OpenRouter error {resp.status_code}: {err}")
+                        yield f"data: {json.dumps({'text': f'I am having trouble right now. Please try again or call (203) 932-7000.'})}\n\n"
                     else:
                         async for line in resp.aiter_lines():
-                            if not line.startswith("data: "):
-                                continue
+                            if not line.startswith("data: "): continue
                             d = line[6:].strip()
-                            if not d:
-                                continue
+                            if d == "[DONE]": break
                             try:
-                                chunk = json.loads(d)
-                                t = (chunk.get("candidates",[{}])[0]
-                                     .get("content",{})
-                                     .get("parts",[{}])[0]
-                                     .get("text",""))
-                                if t:
-                                    yield f"data: {json.dumps({'text':t})}\n\n"
-                            except (json.JSONDecodeError, KeyError, IndexError):
-                                continue
+                                t = json.loads(d)["choices"][0]["delta"].get("content","")
+                                if t: yield f"data: {json.dumps({'text':t})}\n\n"
+                            except: continue
         except Exception as e:
             print(f"Chat error: {e}")
             yield f"data: {json.dumps({'text': 'Sorry, I had trouble connecting. Please try again!'})}\n\n"
@@ -419,7 +452,7 @@ def health():
         "status":           "ok",
         "ready":            _ready,
         "model":            MODEL,
-        "provider":         "Google AI",
+        "provider":         "OpenRouter",
         "crawl_done":       _crawl_done,
         "pages_crawled":    _pages_crawled,
         "knowledge_chunks": len(_knowledge),
@@ -431,18 +464,27 @@ def health():
 
 @app.get("/debug")
 async def debug():
-    """Test Google AI connection directly."""
-    if not GOOGLE_KEY:
-        return {"error": "GOOGLE_API_KEY not set"}
+    if not OPENROUTER_KEY:
+        return {"error": "OPENROUTER_API_KEY not set"}
     try:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent?key={GOOGLE_KEY}"
-        async with httpx.AsyncClient(timeout=30) as client:
-            resp = await client.post(url, json={
-                "contents": [{"role":"user","parts":[{"text":"say hi in one word"}]}],
-                "generationConfig": {"maxOutputTokens": 10}
-            })
-            return {"model": MODEL, "provider": "Google AI",
-                    "status": resp.status_code, "response": resp.json()}
+        async with httpx.AsyncClient(timeout=20) as client:
+            resp = await client.post(
+                OPENROUTER_URL,
+                headers={"Authorization": f"Bearer {OPENROUTER_KEY}",
+                         "Content-Type": "application/json"},
+                json={"model": MODEL,
+                      "messages": [{"role":"user","content":"say hi"}],
+                      "max_tokens": 10, "stream": False}
+            )
+            data = resp.json()
+            ok   = resp.status_code == 200
+            return {
+                "model":    MODEL,
+                "provider": "OpenRouter",
+                "status":   resp.status_code,
+                "working":  ok,
+                "response": data.get("choices",[{}])[0].get("message",{}).get("content","") if ok else data.get("error",{}).get("message","")
+            }
     except Exception as e:
         return {"error": str(e)}
 
@@ -462,9 +504,14 @@ def prof_reload():
 @app.post("/professors/refresh")
 def prof_refresh():
     threading.Thread(target=run_professor_scraper, daemon=True).start()
-    return {"message": "Scraper started — check /health in 15-20 mins"}
+    return {"message": "Scraper started — check /health in 15 mins"}
 
 @app.get("/")
 def root():
-    return {"message": "Ask Charlie — UNH Assistant",
-            "ready": _ready, "model": MODEL, "provider": "Google AI"}
+    return {
+        "message":  "Ask Charlie — UNH AI Assistant",
+        "ready":    _ready,
+        "model":    MODEL,
+        "provider": "OpenRouter",
+        "docs":     "https://askcharlie.netlify.app"
+    }
