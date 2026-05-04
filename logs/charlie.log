@@ -1,0 +1,407 @@
+2026-04-28 20:09:45 INFO Loading embedding model (all-MiniLM-L6-v2)...
+2026-04-28 20:09:46 INFO ✅ Embedding model ready
+2026-04-28 20:09:48 INFO ✅ Reranker ready
+2026-04-28 20:09:48 INFO Knowledge base cleared for fresh load
+2026-04-28 20:09:48 INFO ✅ 34 buildings
+2026-04-28 20:09:48 INFO ✅ CDC loaded
+2026-04-28 20:09:48 INFO ✅ 2302 professors
+2026-04-28 20:09:48 INFO ✅ 24 programs
+2026-04-28 20:09:48 INFO ✅ Memory loaded (4 sessions)
+2026-04-28 20:09:48 INFO === Ask Charlie v4 READY | Model: qwen2.5:14b | Vector: True ===
+2026-04-28 20:09:48 INFO Fetching 22 UNH pages with type tags...
+2026-04-28 20:09:49 INFO   ✅ [page      ] academics
+2026-04-28 20:09:50 INFO   ✅ [course    ] programs
+2026-04-28 20:09:51 INFO   ✅ [course    ] data-science
+2026-04-28 20:09:53 INFO   ✅ [professor ] data-science
+2026-04-28 20:09:53 INFO   ✅ [course    ] artificial-intelligence
+2026-04-28 20:09:54 INFO   ✅ [professor ] artificial-intelligence
+2026-04-28 20:09:56 INFO   ✅ [course    ] computer-science
+2026-04-28 20:09:58 INFO   ✅ [professor ] academic-departments
+2026-04-28 20:09:58 INFO   ✅ [course    ] business
+2026-04-28 20:10:00 INFO   ✅ [admission ] graduate
+2026-04-28 20:10:01 INFO   ✅ [admission ] undergraduate
+2026-04-28 20:10:04 INFO   ✅ [admission ] financial-aid
+2026-04-28 20:10:04 INFO   ✅ [career    ] international
+2026-04-28 20:10:05 INFO   ✅ [career    ] career-development-center
+2026-04-28 20:10:07 INFO   ✅ [page      ] health-wellness
+2026-04-28 20:10:08 INFO   ✅ [page      ] living-on-campus
+2026-04-28 20:10:08 INFO   ✅ [it        ] mfa
+2026-04-28 20:10:09 INFO   ✅ [it        ] canvas
+2026-04-28 20:10:11 INFO   ✅ [building  ] campus-locations
+2026-04-28 20:10:12 INFO   ✅ [page      ] calendar
+2026-04-28 20:10:13 INFO   ✅ [dining    ] locations
+2026-04-28 20:10:14 INFO   ✅ [dining    ] meal-plan
+2026-04-28 20:10:15 INFO ✅ 22/22 pages | 234 total chunks
+2026-04-28 20:10:15 INFO Type breakdown: building:38 | career:11 | course:77 | page:56 | professor:15 | admission:12 | it:18 | dining:7
+2026-04-28 20:10:15 INFO Building FAISS index (234 chunks)...
+2026-04-28 20:10:15 INFO ✅ FAISS ready: 234 chunks | building:38 | career:11 | course:77 | page:56 | professor:15 | admission:12 | it:18 | dining:7
+2026-04-28 20:12:37 INFO [s_ajpdm55zmoj9hhqe] Q: What dining options are on campus? | intent=dining
+2026-04-28 20:12:37 INFO Context built: 2168 chars | type_filter=dining | rewritten='What dining options are on campus?'
+2026-04-28 20:12:37 INFO Confidence: high | Context: 2168 chars
+2026-04-28 20:13:26 INFO [Anand] answered in 49546ms | intent=dining | confidence=high
+2026-04-28 20:14:46 INFO [s_ajpdm55zmoj9hhqe] Q: where is maxcy hall | intent=campus
+2026-04-28 20:14:49 INFO Query rewrite: 'where is maxcy hall' → 'Where is Maxcy Hall located on the University of New Haven campus?'
+2026-04-28 20:14:49 INFO Context built: 1206 chars | type_filter=building | rewritten='Where is Maxcy Hall located on the University of New Haven c'
+2026-04-28 20:14:49 INFO Confidence: high | Context: 1206 chars
+2026-04-28 20:15:09 INFO [Anand] answered in 20022ms | intent=campus | confidence=high
+2026-04-28 20:41:03 INFO New user registered: Anand (session=s_309gyxqhmojbx0lq)
+2026-04-28 20:41:11 INFO [s_309gyxqhmojbx0lq] Q: Who is Professor Pithadia? | intent=professor
+2026-04-28 20:41:11 INFO Context built: 3397 chars | type_filter=professor | rewritten='Who is Professor Pithadia?'
+2026-04-28 20:41:11 INFO Confidence: high | Context: 3397 chars
+2026-04-28 20:41:38 INFO [Anand] answered in 26801ms | intent=professor | confidence=high
+2026-04-28 20:42:09 INFO [s_309gyxqhmojbx0lq] Q: where is maxy hall | intent=campus
+2026-04-28 20:42:11 INFO Query rewrite: 'where is maxy hall' → 'Where is Maxy Hall located on the University of New Haven campus?'
+2026-04-28 20:42:11 INFO Context built: 1206 chars | type_filter=building | rewritten='Where is Maxy Hall located on the University of New Haven ca'
+2026-04-28 20:42:11 INFO Confidence: high | Context: 1206 chars
+2026-04-28 20:42:27 INFO [Anand] answered in 16317ms | intent=campus | confidence=high
+2026-04-28 20:42:48 INFO New user registered: Sai (session=s_xh7ycwa8mojbz56b)
+2026-04-28 20:42:53 INFO [s_xh7ycwa8mojbz56b] Q: How do I set up MFA? | intent=it_support
+2026-04-28 20:42:54 INFO Context built: 3225 chars | type_filter=it | rewritten='How do I set up MFA?'
+2026-04-28 20:42:54 INFO Confidence: high | Context: 3225 chars
+2026-04-28 20:43:28 INFO [Sai] answered in 34668ms | intent=it_support | confidence=high
+2026-04-30 15:01:08 INFO New user registered: User (session=s_yma9t5qvmolun01e)
+2026-04-30 15:01:51 INFO [s_yma9t5qvmolun01e] Q: Who is the coordinator for Data Science? | intent=professor
+2026-04-30 15:01:51 INFO Context built: 5783 chars | type_filter=professor | rewritten='Who is the coordinator for Data Science?'
+2026-04-30 15:01:51 INFO Confidence: high | Context: 4000 chars
+2026-04-30 15:02:35 INFO [User] answered in 43558ms | intent=professor | confidence=high
+2026-04-30 18:41:43 INFO New user registered: Sakshi (session=s_ynoi2pqrmolus134)
+2026-04-30 18:42:28 INFO [s_ynoi2pqrmolus134] Q: where is bergam hall | intent=campus
+2026-04-30 18:42:35 INFO Query rewrite: 'where is bergam hall' → 'Where is Bergam Hall located on the University of New Haven campus?'
+2026-04-30 18:42:36 INFO Context built: 1168 chars | type_filter=building | rewritten='Where is Bergam Hall located on the University of New Haven '
+2026-04-30 18:42:36 INFO Confidence: high | Context: 1168 chars
+2026-04-30 18:42:51 INFO [Sakshi] answered in 15257ms | intent=campus | confidence=high
+2026-04-30 18:46:21 INFO [s_ynoi2pqrmolus134] Q: detalis about professor ahmed ozukul | intent=professor
+2026-04-30 18:46:22 INFO Context built: 4276 chars | type_filter=professor | rewritten='detalis about professor ahmed ozukul'
+2026-04-30 18:46:22 INFO Confidence: high | Context: 4000 chars
+2026-04-30 18:46:42 INFO [Sakshi] answered in 19983ms | intent=professor | confidence=high
+2026-04-30 18:47:09 INFO [s_ynoi2pqrmolus134] Q: professor ahmed ozkul | intent=professor
+2026-04-30 18:47:12 INFO Query rewrite: 'professor ahmed ozkul' → 'What courses is Professor Ahmed Ozkuł teaching this semester at UNH?'
+2026-04-30 18:47:12 INFO Context built: 3955 chars | type_filter=professor | rewritten='What courses is Professor Ahmed Ozkuł teaching this semester'
+2026-04-30 18:47:12 INFO Confidence: high | Context: 3955 chars
+2026-04-30 18:47:38 INFO [Sakshi] answered in 26126ms | intent=professor | confidence=high
+2026-04-30 18:48:22 INFO [s_ynoi2pqrmolus134] Q: what events are going on now? | intent=general
+2026-04-30 18:48:25 INFO Query rewrite: 'what events are going on now?' → 'What current events or activities are happening on campus at UNH today?'
+2026-04-30 18:48:25 INFO Context built: 2625 chars | type_filter=None | rewritten='What current events or activities are happening on campus at'
+2026-04-30 18:48:25 INFO Confidence: high | Context: 2625 chars
+2026-04-30 18:49:05 INFO [Sakshi] answered in 40010ms | intent=general | confidence=high
+2026-04-30 18:57:58 INFO [s_ynoi2pqrmolus134] Q: computer science co ordinator | intent=it_support
+2026-04-30 18:57:58 INFO Context built: 4413 chars | type_filter=it | rewritten='computer science co ordinator'
+2026-04-30 18:57:58 INFO Confidence: high | Context: 4000 chars
+2026-04-30 18:58:34 INFO [Sakshi] answered in 35604ms | intent=it_support | confidence=high
+2026-05-01 10:48:39 INFO Loading embedding model (all-MiniLM-L6-v2)...
+2026-05-01 10:48:41 INFO ✅ Embedding model ready
+2026-05-01 10:48:43 INFO ✅ Reranker ready
+2026-05-01 10:48:43 INFO Knowledge base cleared for fresh load
+2026-05-01 10:48:43 INFO ✅ 34 buildings
+2026-05-01 10:48:43 INFO ✅ CDC loaded
+2026-05-01 10:48:43 INFO ✅ 2302 professors
+2026-05-01 10:48:43 INFO ✅ 24 programs
+2026-05-01 10:48:43 INFO ✅ Memory loaded (8 sessions)
+2026-05-01 10:48:43 INFO === Ask Charlie v4 READY | Model: qwen2.5:14b | Vector: True ===
+2026-05-01 10:48:43 INFO Fetching 22 UNH pages with type tags...
+2026-05-01 10:48:44 INFO   ✅ [page      ] academics
+2026-05-01 10:48:45 INFO   ✅ [course    ] programs
+2026-05-01 10:48:46 INFO   ✅ [course    ] data-science
+2026-05-01 10:48:48 INFO   ✅ [professor ] data-science
+2026-05-01 10:48:49 INFO   ✅ [course    ] artificial-intelligence
+2026-05-01 10:48:51 INFO   ✅ [professor ] artificial-intelligence
+2026-05-01 10:48:51 INFO   ✅ [course    ] computer-science
+2026-05-01 10:48:53 INFO   ✅ [professor ] academic-departments
+2026-05-01 10:48:55 INFO   ✅ [course    ] business
+2026-05-01 10:48:57 INFO   ✅ [admission ] graduate
+2026-05-01 10:48:58 INFO   ✅ [admission ] undergraduate
+2026-05-01 10:48:59 INFO   ✅ [admission ] financial-aid
+2026-05-01 10:49:00 INFO   ✅ [career    ] international
+2026-05-01 10:49:01 INFO   ✅ [career    ] career-development-center
+2026-05-01 10:49:03 INFO   ✅ [page      ] health-wellness
+2026-05-01 10:49:04 INFO   ✅ [page      ] living-on-campus
+2026-05-01 10:49:05 INFO   ✅ [it        ] mfa
+2026-05-01 10:49:06 INFO   ✅ [it        ] canvas
+2026-05-01 10:49:06 INFO   ✅ [building  ] campus-locations
+2026-05-01 10:49:08 INFO   ✅ [page      ] calendar
+2026-05-01 10:49:10 INFO   ✅ [dining    ] locations
+2026-05-01 10:49:11 INFO   ✅ [dining    ] meal-plan
+2026-05-01 10:49:11 INFO ✅ 22/22 pages | 236 total chunks
+2026-05-01 10:49:11 INFO Type breakdown: building:39 | career:11 | course:78 | page:55 | professor:15 | admission:13 | it:18 | dining:7
+2026-05-01 10:49:11 INFO Building FAISS index (236 chunks)...
+2026-05-01 10:49:12 INFO ✅ FAISS ready: 236 chunks | building:39 | career:11 | course:78 | page:55 | professor:15 | admission:13 | it:18 | dining:7
+2026-05-01 10:50:36 INFO New user registered: Spandhana (session=s_b0nc09psmon140qw)
+2026-05-01 10:52:26 INFO New user registered: Ka (session=s_bxgkwa4amon17jzi)
+2026-05-01 10:53:05 INFO New user registered: Anand (session=s_zvi8pu00mon17ql2)
+2026-05-01 10:56:40 INFO Loading embedding model (all-MiniLM-L6-v2)...
+2026-05-01 10:56:41 INFO ✅ Embedding model ready
+2026-05-01 10:56:43 INFO ✅ Reranker ready
+2026-05-01 10:56:43 INFO Knowledge base cleared for fresh load
+2026-05-01 10:56:43 INFO ✅ 34 buildings
+2026-05-01 10:56:43 INFO ✅ CDC loaded
+2026-05-01 10:56:43 INFO ✅ 2302 professors
+2026-05-01 10:56:43 INFO ✅ 24 programs
+2026-05-01 10:56:43 INFO ✅ Memory loaded (11 sessions)
+2026-05-01 10:56:43 INFO === Ask Charlie v4 READY | Model: qwen2.5:14b | Vector: True ===
+2026-05-01 10:56:43 INFO Fetching 22 UNH pages with type tags...
+2026-05-01 10:56:44 INFO   ✅ [page      ] academics
+2026-05-01 10:56:46 INFO   ✅ [course    ] programs
+2026-05-01 10:56:48 INFO   ✅ [course    ] data-science
+2026-05-01 10:56:50 INFO   ✅ [professor ] data-science
+2026-05-01 10:56:52 INFO   ✅ [course    ] artificial-intelligence
+2026-05-01 10:56:53 INFO   ✅ [professor ] artificial-intelligence
+2026-05-01 10:56:55 INFO   ✅ [course    ] computer-science
+2026-05-01 10:56:57 INFO   ✅ [professor ] academic-departments
+2026-05-01 10:56:58 INFO   ✅ [course    ] business
+2026-05-01 10:56:59 INFO   ✅ [admission ] graduate
+2026-05-01 10:57:01 INFO   ✅ [admission ] undergraduate
+2026-05-01 10:57:01 INFO   ✅ [admission ] financial-aid
+2026-05-01 10:57:03 INFO   ✅ [career    ] international
+2026-05-01 10:57:04 INFO   ✅ [career    ] career-development-center
+2026-05-01 10:57:06 INFO   ✅ [page      ] health-wellness
+2026-05-01 10:57:07 INFO   ✅ [page      ] living-on-campus
+2026-05-01 10:57:07 INFO   ✅ [it        ] mfa
+2026-05-01 10:57:08 INFO   ✅ [it        ] canvas
+2026-05-01 10:57:10 INFO   ✅ [building  ] campus-locations
+2026-05-01 10:57:12 INFO   ✅ [page      ] calendar
+2026-05-01 10:57:13 INFO   ✅ [dining    ] locations
+2026-05-01 10:57:14 INFO   ✅ [dining    ] meal-plan
+2026-05-01 10:57:15 INFO ✅ 22/22 pages | 234 total chunks
+2026-05-01 10:57:15 INFO Type breakdown: building:38 | career:11 | course:77 | page:55 | professor:15 | admission:13 | it:18 | dining:7
+2026-05-01 10:57:15 INFO Building FAISS index (234 chunks)...
+2026-05-01 10:57:16 INFO ✅ FAISS ready: 234 chunks | building:38 | career:11 | course:77 | page:55 | professor:15 | admission:13 | it:18 | dining:7
+2026-05-01 10:58:06 INFO New user registered: Anand (session=s_hp40tpq3mon1ewm9)
+2026-05-01 11:00:22 INFO New user registered: Anand (session=s_xsfsxz47mon1hti2)
+2026-05-01 11:08:42 INFO Loading embedding model (all-MiniLM-L6-v2)...
+2026-05-01 11:08:45 INFO ✅ Embedding model ready
+2026-05-01 11:08:47 INFO ✅ Reranker ready
+2026-05-01 11:08:47 INFO Knowledge base cleared for fresh load
+2026-05-01 11:08:47 INFO ✅ 34 buildings
+2026-05-01 11:08:47 INFO ✅ CDC loaded
+2026-05-01 11:08:47 INFO ✅ 2302 professors
+2026-05-01 11:08:47 INFO ✅ 24 programs
+2026-05-01 11:08:47 INFO ✅ Memory loaded (13 sessions)
+2026-05-01 11:08:47 INFO === Ask Charlie v4 READY | Model: qwen2.5:14b | Vector: True ===
+2026-05-01 11:08:47 INFO Fetching 22 UNH pages with type tags...
+2026-05-01 11:08:47 INFO   ✅ [page      ] academics
+2026-05-01 11:08:49 INFO   ✅ [course    ] programs
+2026-05-01 11:08:50 INFO   ✅ [course    ] data-science
+2026-05-01 11:08:52 INFO   ✅ [professor ] data-science
+2026-05-01 11:08:54 INFO   ✅ [course    ] artificial-intelligence
+2026-05-01 11:08:56 INFO   ✅ [professor ] artificial-intelligence
+2026-05-01 11:08:58 INFO   ✅ [course    ] computer-science
+2026-05-01 11:09:00 INFO   ✅ [professor ] academic-departments
+2026-05-01 11:09:01 INFO   ✅ [course    ] business
+2026-05-01 11:09:02 INFO   ✅ [admission ] graduate
+2026-05-01 11:09:03 INFO   ✅ [admission ] undergraduate
+2026-05-01 11:09:05 INFO   ✅ [admission ] financial-aid
+2026-05-01 11:09:07 INFO   ✅ [career    ] international
+2026-05-01 11:09:08 INFO   ✅ [career    ] career-development-center
+2026-05-01 11:09:10 INFO   ✅ [page      ] health-wellness
+2026-05-01 11:09:12 INFO   ✅ [page      ] living-on-campus
+2026-05-01 11:09:13 INFO   ✅ [it        ] mfa
+2026-05-01 11:09:13 INFO   ✅ [it        ] canvas
+2026-05-01 11:09:15 INFO   ✅ [building  ] campus-locations
+2026-05-01 11:09:17 INFO   ✅ [page      ] calendar
+2026-05-01 11:09:19 INFO   ✅ [dining    ] locations
+2026-05-01 11:09:20 INFO   ✅ [dining    ] meal-plan
+2026-05-01 11:09:20 INFO ✅ 22/22 pages | 232 total chunks
+2026-05-01 11:09:20 INFO Type breakdown: building:38 | career:11 | course:77 | page:54 | professor:15 | admission:12 | it:18 | dining:7
+2026-05-01 11:09:20 INFO Building FAISS index (232 chunks)...
+2026-05-01 11:09:21 INFO ✅ FAISS ready: 232 chunks | building:38 | career:11 | course:77 | page:54 | professor:15 | admission:12 | it:18 | dining:7
+2026-05-01 11:10:38 INFO New user registered: Anand (session=s_i5s214ttmon1uzt0)
+2026-05-01 11:10:41 INFO event=req_start id=bfd70407 user=Anand session=s_i5s214ttmo intent=health
+2026-05-01 11:10:41 INFO Context built: 3086 chars | type_filter=page | rewritten='Health and wellness counseling services at UNH'
+2026-05-01 11:10:41 INFO event=context id=bfd70407 chars=3086 filter=page confidence=high
+2026-05-01 11:11:15 INFO event=req_end id=bfd70407 user=Anand latency=33.95s intent=health confidence=high
+2026-05-01 11:11:15 WARNING event=slow_query id=bfd70407 user=Anand latency=33.95s question="Health and wellness counseling services at UNH"
+2026-05-01 11:11:32 INFO event=req_start id=aa718f48 user=Anand session=s_i5s214ttmo intent=professor
+2026-05-01 11:11:35 INFO Query rewrite: 'who is dr.ardiana sula?' → 'What department at UNH does Dr. Ardiana Sula work in, and what are her research interests?'
+2026-05-01 11:11:35 INFO Context built: 3022 chars | type_filter=professor | rewritten='What department at UNH does Dr. Ardiana Sula work in, and wh'
+2026-05-01 11:11:35 INFO event=context id=aa718f48 chars=3022 filter=professor confidence=high
+2026-05-01 11:12:01 INFO event=req_end id=aa718f48 user=Anand latency=29.27s intent=professor confidence=high
+2026-05-01 11:12:05 INFO event=req_start id=bf9ca46f user=Anand session=s_i5s214ttmo intent=general
+2026-05-01 11:12:08 INFO Query rewrite: 'What courses do they teach?' → 'What specific courses are offered in the Computer Science department at UNH?'
+2026-05-01 11:12:08 INFO Context built: 2642 chars | type_filter=None | rewritten='What specific courses are offered in the Computer Science de'
+2026-05-01 11:12:08 INFO event=context id=bf9ca46f chars=2642 filter=None confidence=high
+2026-05-01 11:12:43 INFO event=req_end id=bf9ca46f user=Anand latency=37.77s intent=general confidence=high
+2026-05-01 11:12:43 WARNING event=slow_query id=bf9ca46f user=Anand latency=37.77s question="What courses do they teach?"
+2026-05-01 11:16:50 INFO New user registered: Sharma (session=s_w4n944qumon1xvo3)
+2026-05-01 11:19:16 INFO New user registered: Anand (session=s_kzjyjjh4mon256bm)
+2026-05-01 11:19:53 INFO event=req_start id=fea3878c user=Anand session=s_kzjyjjh4mo intent=program
+2026-05-01 11:19:53 INFO Context built: 3225 chars | type_filter=course | rewritten='where are the forms to change the major'
+2026-05-01 11:19:53 INFO event=context id=fea3878c chars=3225 filter=course confidence=high
+2026-05-01 11:20:25 INFO event=req_end id=fea3878c user=Anand latency=31.49s intent=program confidence=high
+2026-05-01 11:20:25 WARNING event=slow_query id=fea3878c user=Anand latency=31.49s question="where are the forms to change the major"
+2026-05-01 11:31:40 INFO event=req_start id=d9506a1b user=Anand session=s_kzjyjjh4mo intent=financial
+2026-05-01 11:31:40 INFO Context built: 3408 chars | type_filter=admission | rewritten='What is the tuition and financial aid at UNH?'
+2026-05-01 11:31:40 INFO event=context id=d9506a1b chars=3408 filter=admission confidence=high
+2026-05-01 11:32:28 INFO event=req_end id=d9506a1b user=Anand latency=47.89s intent=financial confidence=high
+2026-05-01 11:32:28 WARNING event=slow_query id=d9506a1b user=Anand latency=47.89s question="What is the tuition and financial aid at UNH?"
+2026-05-01 11:33:07 INFO event=req_start id=8cb88b09 user=Anand session=s_kzjyjjh4mo intent=general
+2026-05-01 11:33:10 INFO Query rewrite: 'how to get assistanceship' → 'How can I apply for an assistantship at the University of New Haven?'
+2026-05-01 11:33:10 INFO Context built: 3141 chars | type_filter=None | rewritten='How can I apply for an assistantship at the University of Ne'
+2026-05-01 11:33:10 INFO event=context id=8cb88b09 chars=3141 filter=None confidence=high
+2026-05-01 11:34:01 INFO event=req_end id=8cb88b09 user=Anand latency=53.14s intent=general confidence=high
+2026-05-01 11:34:01 WARNING event=slow_query id=8cb88b09 user=Anand latency=53.14s question="how to get assistanceship"
+2026-05-01 11:34:08 INFO event=req_start id=8425225f user=Anand session=s_kzjyjjh4mo intent=program
+2026-05-01 11:34:09 INFO Context built: 3226 chars | type_filter=course | rewritten='for ra  what is the deadline to apply for fall2026'
+2026-05-01 11:34:09 INFO event=context id=8425225f chars=3226 filter=course confidence=high
+2026-05-01 11:34:46 INFO event=req_end id=8425225f user=Anand latency=37.84s intent=program confidence=high
+2026-05-01 11:34:46 WARNING event=slow_query id=8425225f user=Anand latency=37.84s question="for ra  what is the deadline to apply for fall2026"
+2026-05-01 11:36:34 INFO event=req_start id=ccf794cf user=Anand session=s_kzjyjjh4mo intent=international
+2026-05-01 11:36:34 INFO Context built: 3223 chars | type_filter=career | rewritten='how can i transfer from b1/b2 to f1'
+2026-05-01 11:36:34 INFO event=context id=ccf794cf chars=3223 filter=career confidence=high
+2026-05-01 11:37:53 INFO event=req_end id=ccf794cf user=Anand latency=79.21s intent=international confidence=high
+2026-05-01 11:37:53 WARNING event=slow_query id=ccf794cf user=Anand latency=79.21s question="how can i transfer from b1/b2 to f1"
+2026-05-01 11:38:23 INFO event=req_start id=7375d3c3 user=Anand session=s_kzjyjjh4mo intent=general
+2026-05-01 11:38:26 INFO Query rewrite: 'i am already in usa on B1/B2' → 'Can international students at UNH change their status from B1/B2 to F-1 while studying here?'
+2026-05-01 11:38:26 INFO Context built: 2415 chars | type_filter=None | rewritten='Can international students at UNH change their status from B'
+2026-05-01 11:38:26 INFO event=context id=7375d3c3 chars=2415 filter=None confidence=high
+2026-05-01 11:39:38 INFO event=req_end id=7375d3c3 user=Anand latency=74.68s intent=general confidence=high
+2026-05-01 11:39:38 WARNING event=slow_query id=7375d3c3 user=Anand latency=74.68s question="i am already in usa on B1/B2"
+2026-05-01 11:40:11 INFO event=req_start id=286ae0ea user=Anand session=s_kzjyjjh4mo intent=general
+2026-05-01 11:40:11 INFO Context built: 3533 chars | type_filter=None | rewritten='i am a domestic student what all things can i participate in'
+2026-05-01 11:40:11 INFO event=context id=286ae0ea chars=3533 filter=None confidence=high
+2026-05-01 11:41:25 INFO event=req_end id=286ae0ea user=Anand latency=74.41s intent=general confidence=high
+2026-05-01 11:41:25 WARNING event=slow_query id=286ae0ea user=Anand latency=74.41s question="i am a domestic student what all things can i participate in"
+2026-05-01 11:45:45 INFO event=req_start id=f391798b user=Anand session=s_kzjyjjh4mo intent=general
+2026-05-01 11:45:45 INFO Context built: 2826 chars | type_filter=None | rewritten='i havent recived insurance from university even tough i have'
+2026-05-01 11:45:45 INFO event=context id=f391798b chars=2826 filter=None confidence=high
+2026-05-01 11:46:36 INFO event=req_end id=f391798b user=Anand latency=51.34s intent=general confidence=high
+2026-05-01 11:46:36 WARNING event=slow_query id=f391798b user=Anand latency=51.34s question="i havent recived insurance from university even tough i have"
+2026-05-01 11:47:56 INFO event=req_start id=cf762e43 user=Anand session=s_kzjyjjh4mo intent=campus
+2026-05-01 11:47:59 INFO Query rewrite: 'where is maxcy hall' → 'Where is Maxcy Hall located on the University of New Haven campus?'
+2026-05-01 11:47:59 INFO Context built: 1206 chars | type_filter=building | rewritten='Where is Maxcy Hall located on the University of New Haven c'
+2026-05-01 11:47:59 INFO event=context id=cf762e43 chars=1206 filter=building confidence=high
+2026-05-01 11:48:39 INFO event=req_end id=cf762e43 user=Anand latency=42.57s intent=campus confidence=high
+2026-05-01 11:48:39 WARNING event=slow_query id=cf762e43 user=Anand latency=42.57s question="where is maxcy hall"
+2026-05-01 11:49:37 INFO event=req_start id=104e6495 user=Anand session=s_kzjyjjh4mo intent=general
+2026-05-01 11:49:39 INFO Query rewrite: 'who created askcharlie?' → 'Who at the University of New Haven developed AskCharlie, the chatbot?'
+2026-05-01 11:49:39 INFO Context built: 2879 chars | type_filter=None | rewritten='Who at the University of New Haven developed AskCharlie, the'
+2026-05-01 11:49:39 INFO event=context id=104e6495 chars=2879 filter=None confidence=high
+2026-05-01 11:50:05 INFO event=req_end id=104e6495 user=Anand latency=28.50s intent=general confidence=high
+2026-05-01 11:59:01 INFO event=req_start id=5e82f85c user=Anand session=s_kzjyjjh4mo intent=dining
+2026-05-01 11:59:01 INFO Context built: 3004 chars | type_filter=dining | rewritten='what are the different dining hall plans?'
+2026-05-01 11:59:01 INFO event=context id=5e82f85c chars=3004 filter=dining confidence=high
+2026-05-01 12:00:01 INFO event=req_end id=5e82f85c user=Anand latency=60.10s intent=dining confidence=high
+2026-05-01 12:00:01 WARNING event=slow_query id=5e82f85c user=Anand latency=60.10s question="what are the different dining hall plans?"
+2026-05-01 12:00:52 INFO event=req_start id=853c3d54 user=Anand session=s_kzjyjjh4mo intent=general
+2026-05-01 12:00:54 INFO Query rewrite: 'how do I get to kaplan?' → 'How do I get to Kaplan Hall from the main campus entrance at the University of New Haven?'
+2026-05-01 12:00:55 INFO Context built: 1424 chars | type_filter=None | rewritten='How do I get to Kaplan Hall from the main campus entrance at'
+2026-05-01 12:00:55 INFO event=context id=853c3d54 chars=1424 filter=None confidence=high
+2026-05-01 12:01:26 INFO event=req_end id=853c3d54 user=Anand latency=34.12s intent=general confidence=high
+2026-05-01 12:01:26 WARNING event=slow_query id=853c3d54 user=Anand latency=34.12s question="how do I get to kaplan?"
+2026-05-01 12:04:14 INFO event=req_start id=b90759e7 user=Anand session=s_kzjyjjh4mo intent=general
+2026-05-01 12:04:16 INFO Query rewrite: 'Which psychology professors teach statistics?' → 'At UNH, which psychology professors teach statistics courses?'
+2026-05-01 12:04:16 INFO Context built: 7490 chars | type_filter=None | rewritten='At UNH, which psychology professors teach statistics courses'
+2026-05-01 12:04:16 INFO event=context id=b90759e7 chars=4000 filter=None confidence=high
+2026-05-01 12:04:56 INFO event=req_end id=b90759e7 user=Anand latency=42.13s intent=general confidence=high
+2026-05-01 12:04:56 WARNING event=slow_query id=b90759e7 user=Anand latency=42.13s question="Which psychology professors teach statistics?"
+2026-05-01 12:05:31 INFO event=req_start id=3fc4eb2d user=Anand session=s_kzjyjjh4mo intent=dining
+2026-05-01 12:05:33 INFO Query rewrite: 'When does Bucknall cafe close on Fridays?' → 'What is the closing time for Bucknall Cafe on Fridays at UNH?'
+2026-05-01 12:05:33 INFO Context built: 3417 chars | type_filter=dining | rewritten='What is the closing time for Bucknall Cafe on Fridays at UNH'
+2026-05-01 12:05:33 INFO event=context id=3fc4eb2d chars=3417 filter=dining confidence=high
+2026-05-01 12:06:08 INFO event=req_end id=3fc4eb2d user=Anand latency=37.08s intent=dining confidence=high
+2026-05-01 12:06:08 WARNING event=slow_query id=3fc4eb2d user=Anand latency=37.08s question="When does Bucknall cafe close on Fridays?"
+2026-05-01 12:07:28 INFO event=req_start id=50d7c43f user=Anand session=s_kzjyjjh4mo intent=course
+2026-05-01 12:07:29 INFO Context built: 3225 chars | type_filter=course | rewritten='How many people have to be registered for a class to run?'
+2026-05-01 12:07:29 INFO event=context id=50d7c43f chars=3225 filter=course confidence=high
+2026-05-01 12:07:59 INFO event=req_end id=50d7c43f user=Anand latency=30.85s intent=course confidence=high
+2026-05-01 12:07:59 WARNING event=slow_query id=50d7c43f user=Anand latency=30.85s question="How many people have to be registered for a class to run?"
+2026-05-01 12:10:57 INFO event=req_start id=d5ec818b user=Anand session=s_kzjyjjh4mo intent=dining
+2026-05-01 12:10:57 INFO Context built: 3416 chars | type_filter=dining | rewritten='when does bartels close today?'
+2026-05-01 12:10:57 INFO event=context id=d5ec818b chars=3416 filter=dining confidence=high
+2026-05-01 12:11:22 INFO event=req_end id=d5ec818b user=Anand latency=24.68s intent=dining confidence=high
+2026-05-01 12:12:21 INFO event=req_start id=3ba5ce2b user=Anand session=s_kzjyjjh4mo intent=course
+2026-05-01 12:12:21 INFO Context built: 3226 chars | type_filter=course | rewritten='I wanna know about an interesting, very very unique elective'
+2026-05-01 12:12:21 INFO event=context id=3ba5ce2b chars=3226 filter=course confidence=high
+2026-05-01 12:12:51 INFO event=req_end id=3ba5ce2b user=Anand latency=29.46s intent=course confidence=high
+2026-05-01 12:13:08 INFO event=req_start id=c393932e user=Anand session=s_kzjyjjh4mo intent=general
+2026-05-01 12:13:08 INFO Context built: 3069 chars | type_filter=None | rewritten='something that teaches me how to make money short term'
+2026-05-01 12:13:08 INFO event=context id=c393932e chars=3069 filter=None confidence=high
+2026-05-01 12:13:52 INFO event=req_end id=c393932e user=Anand latency=43.96s intent=general confidence=high
+2026-05-01 12:13:52 WARNING event=slow_query id=c393932e user=Anand latency=43.96s question="something that teaches me how to make money short term"
+2026-05-01 12:14:30 INFO event=req_start id=f1ee3186 user=Anand session=s_kzjyjjh4mo intent=dining
+2026-05-01 12:14:33 INFO Query rewrite: 'what time does Moe's open?' → 'What are the operating hours for Moe's on campus at the University of New Haven?'
+2026-05-01 12:14:33 INFO Context built: 3225 chars | type_filter=dining | rewritten='What are the operating hours for Moe's on campus at the Univ'
+2026-05-01 12:14:33 INFO event=context id=f1ee3186 chars=3225 filter=dining confidence=high
+2026-05-01 12:14:59 INFO event=req_end id=f1ee3186 user=Anand latency=28.62s intent=dining confidence=high
+2026-05-01 12:15:19 INFO event=req_start id=e8fa54f8 user=Anand session=s_kzjyjjh4mo intent=general
+2026-05-01 12:15:19 INFO Context built: 1972 chars | type_filter=None | rewritten='how far is a walk from hariguri to allington?'
+2026-05-01 12:15:19 INFO event=context id=e8fa54f8 chars=1972 filter=None confidence=high
+2026-05-01 12:15:44 INFO event=req_end id=e8fa54f8 user=Anand latency=24.96s intent=general confidence=high
+2026-05-01 12:18:13 INFO event=req_start id=1a405415 user=Anand session=s_kzjyjjh4mo intent=course
+2026-05-01 12:18:13 INFO Context built: 3224 chars | type_filter=course | rewritten='what to do if you don't pass a subject, do you have t retake'
+2026-05-01 12:18:13 INFO event=context id=1a405415 chars=3224 filter=course confidence=high
+2026-05-01 12:19:00 INFO event=req_end id=1a405415 user=Anand latency=46.90s intent=course confidence=high
+2026-05-01 12:19:00 WARNING event=slow_query id=1a405415 user=Anand latency=46.90s question="what to do if you don't pass a subject, do you have t retake"
+2026-05-01 12:20:14 INFO event=req_start id=f510ef6a user=Anand session=s_kzjyjjh4mo intent=financial
+2026-05-01 12:20:14 INFO Context built: 2507 chars | type_filter=admission | rewritten='how much does the tuition of unh increase each year'
+2026-05-01 12:20:14 INFO event=context id=f510ef6a chars=2507 filter=admission confidence=high
+2026-05-01 12:20:40 INFO event=req_end id=f510ef6a user=Anand latency=26.72s intent=financial confidence=high
+2026-05-01 12:27:05 INFO event=req_start id=d2117753 user=Anand session=s_kzjyjjh4mo intent=professor
+2026-05-01 12:27:05 INFO Context built: 4638 chars | type_filter=professor | rewritten='at what times is the office of grants and sponsored programs'
+2026-05-01 12:27:05 INFO event=context id=d2117753 chars=4000 filter=professor confidence=high
+2026-05-01 12:27:45 INFO event=req_end id=d2117753 user=Anand latency=40.39s intent=professor confidence=high
+2026-05-01 12:27:45 WARNING event=slow_query id=d2117753 user=Anand latency=40.39s question="at what times is the office of grants and sponsored programs"
+2026-05-01 12:33:20 INFO event=req_start id=8f250970 user=Anand session=s_kzjyjjh4mo intent=campus
+2026-05-01 12:33:20 INFO Context built: 750 chars | type_filter=building | rewritten='when are where is the fire science club barbecue today'
+2026-05-01 12:33:20 INFO event=context id=8f250970 chars=750 filter=building confidence=high
+2026-05-01 12:34:00 INFO event=req_end id=8f250970 user=Anand latency=40.80s intent=campus confidence=high
+2026-05-01 12:34:00 WARNING event=slow_query id=8f250970 user=Anand latency=40.80s question="when are where is the fire science club barbecue today"
+2026-05-01 12:35:00 INFO event=req_start id=d22cdeef user=Anand session=s_kzjyjjh4mo intent=general
+2026-05-01 12:35:02 INFO Query rewrite: 'Sorin Illiesiuc' → 'What courses does Professor Sorin Illiesiuc teach at the University of New Haven?'
+2026-05-01 12:35:03 INFO Context built: 3228 chars | type_filter=None | rewritten='What courses does Professor Sorin Illiesiuc teach at the Uni'
+2026-05-01 12:35:03 INFO event=context id=d22cdeef chars=3228 filter=None confidence=high
+2026-05-01 12:35:27 INFO event=req_end id=d22cdeef user=Anand latency=27.01s intent=general confidence=high
+2026-05-01 12:36:36 INFO event=req_start id=5ec30cc5 user=Anand session=s_ajpdm55zmo intent=professor
+2026-05-01 12:36:38 INFO Query rewrite: 'professor Sorin Illiesiuc' → 'What courses is Professor Sorin Illiesiuc teaching this semester at UNH?'
+2026-05-01 12:36:39 INFO Context built: 4345 chars | type_filter=professor | rewritten='What courses is Professor Sorin Illiesiuc teaching this seme'
+2026-05-01 12:36:39 INFO event=context id=5ec30cc5 chars=4000 filter=professor confidence=high
+2026-05-01 12:37:01 INFO event=req_end id=5ec30cc5 user=Anand latency=25.37s intent=professor confidence=high
+2026-05-01 12:38:18 INFO event=req_start id=b2fef4a8 user=Anand session=s_kzjyjjh4mo intent=general
+2026-05-01 12:38:18 INFO Context built: 3225 chars | type_filter=None | rewritten='I want to go to the gym sunday night. When does it close?'
+2026-05-01 12:38:18 INFO event=context id=b2fef4a8 chars=3225 filter=None confidence=high
+2026-05-01 12:38:46 INFO event=req_end id=b2fef4a8 user=Anand latency=28.15s intent=general confidence=high
+2026-05-01 12:39:16 INFO event=req_start id=5d8ee31e user=Anand session=s_kzjyjjh4mo intent=dining
+2026-05-01 12:39:16 INFO Context built: 2954 chars | type_filter=dining | rewritten='What is the cheapest meal plan for a commuter student? What '
+2026-05-01 12:39:16 INFO event=context id=5d8ee31e chars=2954 filter=dining confidence=high
+2026-05-01 12:40:06 INFO event=req_end id=5d8ee31e user=Anand latency=49.74s intent=dining confidence=high
+2026-05-01 12:40:06 WARNING event=slow_query id=5d8ee31e user=Anand latency=49.74s question="What is the cheapest meal plan for a commuter student? What "
+2026-05-01 12:41:16 INFO event=req_start id=6218cba5 user=Anand session=s_kzjyjjh4mo intent=general
+2026-05-01 12:41:16 INFO Context built: 3455 chars | type_filter=None | rewritten='My transcipt mistakenly says I got transfer credits from a c'
+2026-05-01 12:41:16 INFO event=context id=6218cba5 chars=3455 filter=None confidence=high
+2026-05-01 12:42:05 INFO event=req_end id=6218cba5 user=Anand latency=49.45s intent=general confidence=high
+2026-05-01 12:42:05 WARNING event=slow_query id=6218cba5 user=Anand latency=49.45s question="My transcipt mistakenly says I got transfer credits from a c"
+2026-05-01 12:44:01 INFO event=req_start id=6e342ab4 user=Anand session=s_kzjyjjh4mo intent=general
+2026-05-01 12:44:02 INFO Context built: 3271 chars | type_filter=None | rewritten='Does University of new haven research community growing and '
+2026-05-01 12:44:02 INFO event=context id=6e342ab4 chars=3271 filter=None confidence=high
+2026-05-01 12:44:51 INFO event=req_end id=6e342ab4 user=Anand latency=49.46s intent=general confidence=high
+2026-05-01 12:44:51 WARNING event=slow_query id=6e342ab4 user=Anand latency=49.46s question="Does University of new haven research community growing and "
+2026-05-01 12:46:10 INFO event=req_start id=e79996ef user=Anand session=s_ajpdm55zmo intent=general
+2026-05-01 12:46:12 INFO Query rewrite: 'Do you know Ibrahim Tarek?' → 'Is Ibrahim Tarek a faculty member or researcher at the University of New Haven?'
+2026-05-01 12:46:12 INFO Context built: 3226 chars | type_filter=None | rewritten='Is Ibrahim Tarek a faculty member or researcher at the Unive'
+2026-05-01 12:46:12 INFO event=context id=e79996ef chars=3226 filter=None confidence=high
+2026-05-01 12:46:31 INFO event=req_end id=e79996ef user=Anand latency=20.71s intent=general confidence=high
+2026-05-01 12:46:49 INFO event=req_start id=85907ea9 user=Anand session=s_ajpdm55zmo intent=general
+2026-05-01 12:46:52 INFO Query rewrite: 'what about hao Sun?' → 'Who is Hao Sun and what are his credentials at the University of New Haven?'
+2026-05-01 12:46:52 INFO Context built: 3228 chars | type_filter=None | rewritten='Who is Hao Sun and what are his credentials at the Universit'
+2026-05-01 12:46:52 INFO event=context id=85907ea9 chars=3228 filter=None confidence=high
+2026-05-01 12:47:11 INFO event=req_end id=85907ea9 user=Anand latency=21.50s intent=general confidence=high
+2026-05-01 12:47:23 INFO event=req_start id=9241b4a9 user=Anand session=s_ajpdm55zmo intent=professor
+2026-05-01 12:47:25 INFO Query rewrite: 'professor hao Sun?' → 'Professor Hao Sun's office hours and research interests at the University of New Haven?'
+2026-05-01 12:47:25 INFO Context built: 3782 chars | type_filter=professor | rewritten='Professor Hao Sun's office hours and research interests at t'
+2026-05-01 12:47:25 INFO event=context id=9241b4a9 chars=3782 filter=professor confidence=high
+2026-05-01 12:47:51 INFO event=req_end id=9241b4a9 user=Anand latency=27.68s intent=professor confidence=high
+2026-05-01 12:48:25 INFO event=req_start id=4c5f7bc1 user=Anand session=s_ajpdm55zmo intent=professor
+2026-05-01 12:48:28 INFO Query rewrite: 'professor  Ibrahim Tarek?' → 'Who is Professor Ibrahim Tarek at the University of New Haven?'
+2026-05-01 12:48:28 INFO Context built: 4362 chars | type_filter=professor | rewritten='Who is Professor Ibrahim Tarek at the University of New Have'
+2026-05-01 12:48:28 INFO event=context id=4c5f7bc1 chars=4000 filter=professor confidence=high
+2026-05-01 12:48:50 INFO event=req_end id=4c5f7bc1 user=Anand latency=24.89s intent=professor confidence=high
+2026-05-01 12:51:56 INFO event=req_start id=3d934743 user=Anand session=s_ajpdm55zmo intent=general
+2026-05-01 12:51:57 INFO Context built: 3141 chars | type_filter=None | rewritten='is the gravity on mars of any interest to our students?'
+2026-05-01 12:51:57 INFO event=context id=3d934743 chars=3141 filter=None confidence=high
+2026-05-01 12:52:27 INFO event=req_end id=3d934743 user=Anand latency=30.51s intent=general confidence=high
+2026-05-01 12:52:27 WARNING event=slow_query id=3d934743 user=Anand latency=30.51s question="is the gravity on mars of any interest to our students?"
+2026-05-01 13:52:33 INFO New user registered: Anand (session=s_kgjvwfbimon7k7bn)
+2026-05-01 13:52:56 INFO event=req_start id=f07dccba user=Anand session=s_kgjvwfbimo intent=international
+2026-05-01 13:52:56 INFO Context built: 3007 chars | type_filter=career | rewritten='can i work for 30hrs if i am on f1 visa'
+2026-05-01 13:52:56 INFO event=context id=f07dccba chars=3007 filter=career confidence=high
+2026-05-01 13:53:31 INFO event=req_end id=f07dccba user=Anand latency=35.70s intent=international confidence=high
+2026-05-01 13:53:31 WARNING event=slow_query id=f07dccba user=Anand latency=35.70s question="can i work for 30hrs if i am on f1 visa"
