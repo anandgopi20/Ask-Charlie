@@ -12,8 +12,7 @@
 > professors, courses, dining, campus, IT, visas, and more.  
 > Runs fully locally with no cloud dependency.
 
-**[🌐 Live Demo](https://askcharlie.netlify.app)** · **[📖 Wiki](https://github.com/anandgopi20/Ask-Charlie/wiki)** · **[📋 Feedback](https://github.com/anandgopi20/Ask-Charlie/wiki/Feedback)**
-
+ **[📖 Wiki](https://github.com/anandgopi20/Ask-Charlie/wiki)** · 
 </div>
 
 ---
@@ -179,6 +178,6 @@ Built by **Anand Gopi** · University of New Haven
 Testing by **Spandhana** · University of New Haven
 
 
-[askcharlie.netlify.app](https://askcharlie.netlify.app) · [Wiki](https://github.com/anandgopi20/Ask-Charlie/wiki)
+[Wiki](https://github.com/anandgopi20/Ask-Charlie/wiki)
 
 </div>
