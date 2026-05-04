@@ -1,0 +1,179 @@
+{
+  "session_f1wbsyt": {
+    "topics_asked": [
+      "professor",
+      "general"
+    ],
+    "name": null,
+    "program": null,
+    "preferences": [],
+    "last_seen": "2026-04-20T18:12:45.180779",
+    "question_count": 1
+  },
+  "session_ov5wtix": {
+    "topics_asked": [
+      "career",
+      "general",
+      "professor",
+      "dining",
+      "campus"
+    ],
+    "program": "data science",
+    "last_seen": "2026-04-22T19:06:08.632978",
+    "question_count": 8
+  },
+  "session_4ol7ok5": {
+    "topics_asked": [
+      "program",
+      "general",
+      "campus"
+    ],
+    "program": "data science",
+    "last_seen": "2026-04-27T11:05:07.148801",
+    "question_count": 5
+  },
+  "s_ajpdm55zmoj9hhqe": {
+    "name": "Anand",
+    "topics_asked": [
+      "dining",
+      "campus",
+      "professor",
+      "general"
+    ],
+    "program": null,
+    "first_seen": "2026-04-28T19:34:37.878330",
+    "last_seen": "2026-05-01T12:52:27.452937",
+    "question_count": 8
+  },
+  "s_309gyxqhmojbx0lq": {
+    "name": "Anand",
+    "topics_asked": [
+      "professor",
+      "campus"
+    ],
+    "program": null,
+    "first_seen": "2026-04-28T20:41:03.734346",
+    "last_seen": "2026-04-28T20:42:27.992762",
+    "question_count": 2
+  },
+  "s_xh7ycwa8mojbz56b": {
+    "name": "Sai",
+    "topics_asked": [
+      "it_support"
+    ],
+    "program": null,
+    "first_seen": "2026-04-28T20:42:48.118220",
+    "last_seen": "2026-04-28T20:43:28.930606",
+    "question_count": 1
+  },
+  "s_yma9t5qvmolun01e": {
+    "name": "User",
+    "topics_asked": [
+      "professor"
+    ],
+    "program": "data science",
+    "first_seen": "2026-04-30T15:01:07.998406",
+    "last_seen": "2026-04-30T15:02:35.532186",
+    "question_count": 1
+  },
+  "s_ynoi2pqrmolus134": {
+    "name": "Sakshi",
+    "topics_asked": [
+      "campus",
+      "professor",
+      "general",
+      "it_support"
+    ],
+    "program": "computer science",
+    "first_seen": "2026-04-30T18:41:43.516371",
+    "last_seen": "2026-04-30T18:58:34.153607",
+    "question_count": 5
+  },
+  "s_b0nc09psmon140qw": {
+    "name": "Spandhana",
+    "topics_asked": [],
+    "program": null,
+    "first_seen": "2026-05-01T10:50:36.864414",
+    "last_seen": "2026-05-01T10:50:36.864436",
+    "question_count": 0
+  },
+  "s_bxgkwa4amon17jzi": {
+    "name": "Ka",
+    "topics_asked": [],
+    "program": null,
+    "first_seen": "2026-05-01T10:52:26.705478",
+    "last_seen": "2026-05-01T10:52:26.705495",
+    "question_count": 0
+  },
+  "s_zvi8pu00mon17ql2": {
+    "name": "Anand",
+    "topics_asked": [],
+    "program": null,
+    "first_seen": "2026-05-01T10:53:05.779643",
+    "last_seen": "2026-05-01T10:53:05.779664",
+    "question_count": 0
+  },
+  "s_hp40tpq3mon1ewm9": {
+    "name": "Anand",
+    "topics_asked": [],
+    "program": null,
+    "first_seen": "2026-05-01T10:58:06.363605",
+    "last_seen": "2026-05-01T10:58:06.363616",
+    "question_count": 0
+  },
+  "s_xsfsxz47mon1hti2": {
+    "name": "Anand",
+    "topics_asked": [],
+    "program": null,
+    "first_seen": "2026-05-01T11:00:22.910965",
+    "last_seen": "2026-05-01T11:00:22.910983",
+    "question_count": 0
+  },
+  "s_i5s214ttmon1uzt0": {
+    "name": "Anand",
+    "topics_asked": [
+      "health",
+      "professor",
+      "general"
+    ],
+    "program": null,
+    "first_seen": "2026-05-01T11:10:38.062827",
+    "last_seen": "2026-05-01T11:12:43.646170",
+    "question_count": 3
+  },
+  "s_w4n944qumon1xvo3": {
+    "name": "Sharma",
+    "topics_asked": [],
+    "program": null,
+    "first_seen": "2026-05-01T11:16:50.902242",
+    "last_seen": "2026-05-01T11:16:50.902296",
+    "question_count": 0
+  },
+  "s_kzjyjjh4mon256bm": {
+    "name": "Anand",
+    "topics_asked": [
+      "program",
+      "financial",
+      "general",
+      "international",
+      "campus",
+      "dining",
+      "course",
+      "professor"
+    ],
+    "program": null,
+    "first_seen": "2026-05-01T11:19:16.262255",
+    "last_seen": "2026-05-01T12:44:51.238384",
+    "question_count": 29
+  },
+  "s_kgjvwfbimon7k7bn": {
+    "name": "Anand",
+    "topics_asked": [
+      "international"
+    ],
+    "program": null,
+    "first_seen": "2026-05-01T13:52:33.557478",
+    "last_seen": "2026-05-01T13:53:31.840821",
+    "question_count": 1
+  }
+}
