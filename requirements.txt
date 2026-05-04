@@ -5,4 +5,8 @@ requests
 beautifulsoup4
 lxml
 pydantic
+sentence-transformers
+faiss-cpu
+numpy
+python-dotenv
 urllib3
