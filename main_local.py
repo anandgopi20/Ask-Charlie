@@ -1,18 +1,24 @@
 """
-Ask Charlie — Local Version (v4)
-
-What's new in v4:
-  ✅ Query rewriting (LLM-assisted) — rewrites vague questions before search
-  ✅ Metadata filtering — searches only relevant chunk type (professor/course/page/building/dining)
+Ask Charlie — Local Version
+  ✅ Name gate — "Before you get to me, what's your name?" screen
+  ✅ Personalized greeting — "Hey Anand, ask me anything!"
+  ✅ Name remembered per session (data/memory.json)
+  ✅ Structured file logging — logs/charlie.log (rotating 10 MB × 5)
+  ✅ Query analytics — logs/queries.jsonl (one JSON line per request)
+  ✅ Atomic memory writes (tmp → rename, no corruption on crash)
+  ✅ Ollama retry with exponential backoff (3 attempts)
+  ✅ /ready endpoint — 503 until vector index is built
+  ✅ /hello endpoint — returns personalized greeting for frontend
+  ✅ Query rewriting (LLM-assisted)
+  ✅ Metadata filtering (professor/course/page/building/dining)
   ✅ Dynamic prompt builder (per intent)
-  ✅ User memory system (data/memory.json)
   ✅ Intent + query type detection
   ✅ Confidence scoring + hedging
   ✅ Answer post-processing
   ✅ Natural guardrails
   ✅ Vector search (FAISS) + reranking (CrossEncoder)
   ✅ LRU caching + thread safety
-  ✅ Full logging + weekly auto-update
+  ✅ Weekly auto-update
 
 Install deps:
   pip install sentence-transformers faiss-cpu numpy python-dotenv
@@ -33,6 +39,10 @@ import httpx, requests, re, os, json, csv, time, threading, subprocess, logging
 from bs4 import BeautifulSoup
 from pathlib import Path
 from datetime import datetime
+import uuid  
+import os
+import json
+
 
 try:
     from sentence_transformers import SentenceTransformer, CrossEncoder
@@ -48,15 +58,54 @@ try:
 except ImportError:
     pass
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s", datefmt="%H:%M:%S")
-log = logging.getLogger("charlie")
-
 ROOT         = Path(__file__).parent
 OLLAMA_URL   = "http://localhost:11434/api/chat"
 OLLAMA_MODEL = os.environ.get("MODEL", "qwen2.5:14b")
 MEMORY_FILE  = ROOT / "data" / "memory.json"
+LOG_DIR      = ROOT / "logs"
+LOG_DIR.mkdir(exist_ok=True)
 
-app = FastAPI(title="Ask Charlie — Local v4")
+# ── Logging setup ─────────────────────────────────────────────────────────────
+from logging.handlers import RotatingFileHandler
+
+_fmt = logging.Formatter("%(asctime)s %(levelname)s %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
+
+log = logging.getLogger("charlie")
+log.setLevel(logging.INFO)
+
+# 1. Console — see output in terminal as usual
+_console = logging.StreamHandler()
+_console.setFormatter(_fmt)
+log.addHandler(_console)
+
+# 2. Rotating file — charlie.log rolls at 10 MB, keeps 5 backups
+_file = RotatingFileHandler(LOG_DIR / "charlie.log", maxBytes=10_000_000, backupCount=5, encoding="utf-8")
+_file.setFormatter(_fmt)
+log.addHandler(_file)
+
+# 3. Query analytics logger — one JSON line per question → queries.jsonl
+_qlog = logging.getLogger("charlie.queries")
+_qlog.setLevel(logging.INFO)
+_qlog.propagate = False  # don't double-log into charlie.log
+_qfile = RotatingFileHandler(LOG_DIR / "queries.jsonl", maxBytes=5_000_000, backupCount=3, encoding="utf-8")
+_qfile.setFormatter(logging.Formatter("%(message)s"))  # raw JSON lines only
+_qlog.addHandler(_qfile)
+
+def log_query(name: str, session_id: str, question: str, intent: str,
+              confidence: str, response_ms: int):
+    """Write one JSON line to logs/queries.jsonl after every answered question."""
+    record = {
+        "time":        datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "name":        name,
+        "session_id":  session_id,
+        "question":    question,
+        "intent":      intent,
+        "confidence":  confidence,
+        "response_ms": response_ms,
+    }
+    _qlog.info(json.dumps(record))
+
+app = FastAPI(title="Ask Charlie — Local v5")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 # ── Chunk types for metadata filtering ───────────────────────────────────────
@@ -127,18 +176,28 @@ def load_memory():
             _memory = {}
 
 def save_memory():
+    """Atomic write — write to .tmp first, then rename so a crash never corrupts the file."""
     MEMORY_FILE.parent.mkdir(exist_ok=True)
-    MEMORY_FILE.write_text(json.dumps(_memory, indent=2))
+    tmp = MEMORY_FILE.with_suffix(".tmp")
+    tmp.write_text(json.dumps(_memory, indent=2), encoding="utf-8")
+    tmp.replace(MEMORY_FILE)
 
 def get_user_memory(session_id: str) -> dict:
     return _memory.get(session_id, {
-        "topics_asked": [], "program": None,
-        "last_seen": None, "question_count": 0
+        "name":          None,   # set by name gate on first visit
+        "topics_asked":  [],
+        "program":       None,
+        "first_seen":    None,
+        "last_seen":     None,
+        "question_count": 0,
     })
 
 def update_memory(session_id: str, question: str, answer: str):
     mem = get_user_memory(session_id)
-    mem["last_seen"] = datetime.now().isoformat()
+    now = datetime.now().isoformat()
+    mem["last_seen"] = now
+    if not mem.get("first_seen"):
+        mem["first_seen"] = now
     mem["question_count"] = mem.get("question_count", 0) + 1
 
     prog = re.search(
@@ -326,8 +385,40 @@ HARMFUL_PATTERNS = [
     re.compile(r"\bhack (into|the) (canvas|unh system|database)\b", re.I),
 ]
 OFFTOPIC_RE = re.compile(
-    r"\b(bitcoin price|crypto trading|stock market tips|lottery numbers|netflix show|tiktok trend|minecraft tutorial|fortnite strategy)\b", re.I
+    r"\b("
+    r"netflix|hulu|disney plus|spotify|tiktok trend|"
+    r"movie review|song lyrics|music video|"
+    r"minecraft|fortnite|roblox|steam games|"
+    r"bitcoin|crypto|stock tips|forex|lottery|"
+    r"liquor store|bar near|bars near|club near|"
+    r"casino|gambling|betting"
+    r")\b", re.I
 )
+
+# Tier 2 — student-relevant off-campus questions
+STUDENT_HELPFUL_RE = re.compile(
+    r"\b(weather|temperature|raining|snow|"
+    r"nearest|near campus|near unh|near me|close to campus|"
+    r"starbucks|dunkin|coffee shop|pharmacy|cvs|walgreens|"
+    r"urgent care|hospital near|doctor near|"
+    r"parking near|gas station|grocery|supermarket|"
+    r"uber|lyft|taxi|bus route|train|"
+    r"restaurant near|food near|pizza near)\b", re.I
+)
+
+def check_student_helpful(msg: str) -> str | None:
+    if STUDENT_HELPFUL_RE.search(msg.lower()):
+        return (
+            "That\'s a bit outside my UNH knowledge base, but here are some "
+            "quick resources that can help:\n\n"
+            "🌤️ **Weather:** [weather.com](https://weather.com) or just Google \'West Haven CT weather\'\n"
+            "☕ **Nearby places:** [Google Maps](https://maps.google.com) — search near University of New Haven\n"
+            "🏥 **Urgent care near UNH:** Yale New Haven Urgent Care, 150 Sargent Dr\n"
+            "💊 **Pharmacy:** CVS at 490 Campbell Ave, West Haven (5 min from campus)\n"
+            "🚗 **Rides:** Uber/Lyft work well around campus\n\n"
+            "For anything UNH-specific — professors, programs, dining, IT — just ask! 😊"
+        )
+    return None
 
 def check_guardrails(msg: str) -> str | None:
     m = msg.lower()
@@ -337,6 +428,10 @@ def check_guardrails(msg: str) -> str | None:
                 "📞 **(203) 932-7079** | 📍 Schwartz Hall | Mon-Fri 8:30am-4:30pm\n"
                 "For immediate help: Campus Police **(203) 932-7014** or **911**\n\n"
                 "You don't have to handle this alone. 💙")
+    helpful = check_student_helpful(msg)
+    if helpful:
+        return helpful
+
     for pattern in HARMFUL_PATTERNS:
         if pattern.search(m):
             return ("That's not something I can help with. "
@@ -794,9 +889,12 @@ class ChatRequest(BaseModel):
 
 @app.post("/chat")
 async def chat(req: ChatRequest):
-    question = req.message.strip()
-    intent = classify_intent(question)
-    log.info(f"[{req.session_id}] Q: {question[:80]} | intent={intent}")
+    question    = req.message.strip()
+    intent      = classify_intent(question)
+    request_id  = uuid.uuid4().hex[:8]
+    start_time  = time.time()
+    user_name   = get_user_memory(req.session_id).get("name") or "unknown"
+    log.info(f"event=req_start id={request_id} user={user_name} session={req.session_id[:12]} intent={intent}")
 
     guard = check_guardrails(question)
     if guard:
@@ -810,7 +908,7 @@ async def chat(req: ChatRequest):
     confidence = score_confidence(ctx)
     system_prompt = build_dynamic_prompt(question, req.session_id)
 
-    log.info(f"Confidence: {confidence} | Context: {len(ctx)} chars")
+    log.info(f"event=context id={request_id} chars={len(ctx)} filter={INTENT_TO_CHUNK_TYPE.get(intent)} confidence={confidence}")
 
     user_content = (
         f"[CONTEXT DATA]\n{ctx}\n[END CONTEXT]\n\n"
@@ -826,22 +924,29 @@ async def chat(req: ChatRequest):
     messages.append({"role":"user","content":user_content})
 
     full_response = []
+    t_start = time.time()
 
     async def generate():
-        try:
-            async with httpx.AsyncClient(timeout=120) as client:
-                async with client.stream("POST", OLLAMA_URL,
-                    json={
-                        "model": OLLAMA_MODEL, "messages": messages,
-                        "stream": True, "think": False,
-                        "options": {"temperature":0.4,"num_predict":700,
-                                    "repeat_penalty":1.1,
-                                    "stop":["[CONTEXT DATA","Student question:"]}
-                    }
-                ) as resp:
-                    if resp.status_code != 200:
-                        yield f"data: {json.dumps({'text':'Ollama not responding. Run: ollama serve'})}\n\n"
-                    else:
+        import asyncio
+        last_error = None
+        for attempt in range(3):
+            if attempt:
+                await asyncio.sleep(0.5 * (2 ** (attempt - 1)))
+                log.warning(f"Ollama retry {attempt}/2...")
+            try:
+                async with httpx.AsyncClient(timeout=120) as client:
+                    async with client.stream("POST", OLLAMA_URL,
+                        json={
+                            "model": OLLAMA_MODEL, "messages": messages,
+                            "stream": True, "think": False,
+                            "options": {"temperature":0.4,"num_predict":700,
+                                        "repeat_penalty":1.1,
+                                        "stop":["[CONTEXT DATA","Student question:"]}
+                        }
+                    ) as resp:
+                        if resp.status_code != 200:
+                            last_error = f"HTTP {resp.status_code}"
+                            continue
                         async for line in resp.aiter_lines():
                             if not line: continue
                             try:
@@ -852,13 +957,33 @@ async def chat(req: ChatRequest):
                                     yield f"data: {json.dumps({'text': t, 'intent': intent})}\n\n"
                                 if data.get("done"): break
                             except: continue
-        except Exception as e:
-            log.error(f"Ollama error: {e}")
+                        last_error = None
+                        break
+            except Exception as e:
+                last_error = str(e)
+                log.error(f"Ollama error (attempt {attempt+1}): {e}")
+
+        if last_error:
             yield f"data: {json.dumps({'text':'Cannot reach Ollama. Is ollama serve running?'})}\n\n"
         yield "data: [DONE]\n\n"
 
-        # Update memory after response
-        full_text = "".join(full_response)
+        # Log analytics + update memory after streaming completes
+        full_text  = "".join(full_response)
+        elapsed_ms = int((time.time() - t_start) * 1000)
+        latency    = time.time() - start_time
+        mem        = get_user_memory(req.session_id)
+        user_name  = mem.get("name") or "unknown"
+        log.info(f"event=req_end id={request_id} user={user_name} latency={latency:.2f}s intent={intent} confidence={confidence}")
+        if latency > 30:
+            log.warning(f"event=slow_query id={request_id} user={user_name} latency={latency:.2f}s question=\"{question[:60]}\"")
+        log_query(
+            name=user_name,
+            session_id=req.session_id,
+            question=question,
+            intent=intent,
+            confidence=confidence,
+            response_ms=elapsed_ms,
+        )
         if full_text:
             threading.Thread(target=update_memory,
                            args=(req.session_id, question, full_text), daemon=True).start()
@@ -866,13 +991,49 @@ async def chat(req: ChatRequest):
     return StreamingResponse(generate(), media_type="text/event-stream")
 
 # ── Endpoints ─────────────────────────────────────────────────────────────────
+
+class RegisterRequest(BaseModel):
+    session_id: str
+    name: str
+
+@app.post("/register")
+def register(req: RegisterRequest):
+    """Name gate — called once when user types their name for the first time."""
+    name = req.name.strip().title()
+    if not name:
+        return {"error": "Name cannot be empty"}
+    mem = get_user_memory(req.session_id)
+    mem["name"] = name
+    if not mem.get("first_seen"):
+        mem["first_seen"] = datetime.now().isoformat()
+    mem["last_seen"] = datetime.now().isoformat()
+    _memory[req.session_id] = mem
+    save_memory()
+    log.info(f"New user registered: {name} (session={req.session_id})")
+    return {"name": name, "message": f"Hey {name}, ask me anything!"}
+
+@app.get("/hello")
+def hello(session_id: str = "default"):
+    """Returns personalized greeting — or signals frontend to show name gate."""
+    mem = get_user_memory(session_id)
+    name = mem.get("name")
+    if name:
+        count = mem.get("question_count", 0)
+        if count == 0:
+            greeting = f"Hey {name} — ask me anything about UNH. I'm Charlie."
+        else:
+            greeting = f"Hey {name}, welcome back! You've asked me {count} question{'s' if count != 1 else ''} so far."
+    else:
+        greeting = None  # frontend shows name gate
+    return {"name": name, "greeting": greeting, "needs_name": name is None}
+
 @app.get("/health")
 def health():
     from collections import Counter
     with _lock:
         type_counts = dict(Counter(d.get("type","?") for d in _knowledge))
     return {
-        "status": "ok", "version": "4.0",
+        "status": "ok", "version": "5.0",
         "model": OLLAMA_MODEL,
         "vector_search": VECTOR_SEARCH,
         "reranker": _reranker is not None,
@@ -887,8 +1048,16 @@ def health():
         "ready": _ready,
     }
 
+@app.get("/ready")
+def ready():
+    """503 until vector index is built — lets frontend show a loading state."""
+    if _ready:
+        return {"status": "ready", "model": OLLAMA_MODEL}
+    from fastapi import HTTPException
+    raise HTTPException(status_code=503, detail="Still loading knowledge base, please wait...")
+
 @app.get("/memory/{session_id}")
-def get_memory(session_id: str):
+def get_memory_endpoint(session_id: str):
     return get_user_memory(session_id)
 
 @app.delete("/memory/{session_id}")
@@ -900,7 +1069,7 @@ def clear_memory(session_id: str):
 
 @app.get("/")
 def root():
-    return {"message":"Ask Charlie v4 — Query Rewriting + Metadata Filtering","model":OLLAMA_MODEL,"ready":_ready}
+    return {"message": "Ask Charlie v5 — Name gate + Logging + Retry", "model": OLLAMA_MODEL, "ready": _ready}
 
 if __name__ == "__main__":
     import uvicorn
